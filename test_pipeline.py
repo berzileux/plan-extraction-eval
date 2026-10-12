@@ -667,7 +667,6 @@ class TestDimensions(unittest.TestCase):
         self.assertEqual(fmt(None), "?")
 
 
-# ANCHOR BEFORE 20261011_193301
 def _chain_image(ppf=20.0, ticks=(100, 200, 240, 400, 700), y=200, overall_y=250, marks=False):
     """A bare dimension chain: one line, joints, and an overall line below it.
 
@@ -676,7 +675,6 @@ def _chain_image(ppf=20.0, ticks=(100, 200, 240, 400, 700), y=200, overall_y=250
     segment gets a glyph-sized blot above the line, because a piece with nothing
     text-shaped on it is never shown to a reader.
     """
-    # ANCHOR AFTER 20261011_193301
     import numpy as np
     img = np.full((360, 820), 255, np.uint8)
     img[y - 1:y + 1, ticks[0]:ticks[-1]] = 0
@@ -685,12 +683,10 @@ def _chain_image(ppf=20.0, ticks=(100, 200, 240, 400, 700), y=200, overall_y=250
     img[overall_y - 1:overall_y + 1, ticks[0]:ticks[-1]] = 0
     for x in (ticks[0], ticks[-1]):
         img[overall_y - 16:overall_y + 16, x:x + 2] = 0
-    # ANCHOR BEFORE 20261011_193302
     if marks:
         for a, b in zip(ticks, ticks[1:]):
             mid = (a + b) // 2
             img[y - 14:y - 6, mid - 6:mid + 6] = 0
-    # ANCHOR AFTER 20261011_193302
     return img, ppf
 
 
@@ -736,9 +732,7 @@ class TestDimlines(unittest.TestCase):
         """The whole point of the two tiers: repeated gaps are solved by
         arithmetic, so the slow reader is never asked about them."""
         import dimlines
-        # ANCHOR BEFORE 20261011_193303
         img, ppf = _chain_image(ticks=(100, 200, 240, 400, 440, 700), marks=True)
-        # ANCHOR AFTER 20261011_193303
         chain = [c for c in dimlines.detect(img, ppf, "h")[0] if len(c["ticks"]) >= 5][0]
         # segments measure 5, 2, 8, 2, 13 ft; the reader manages only the first
         cheap = _FakeReader("tesseract", ["5'0\""] + [""] * 20)
@@ -1199,9 +1193,7 @@ class TestThreeJointChains(unittest.TestCase):
     def test_both_segments_must_read_for_it_to_count(self):
         """With only two segments there is no room for a silent one."""
         import dimlines
-        # ANCHOR BEFORE 20261011_193304
         img, ppf = _chain_image(ticks=(100, 400, 700), marks=True)
-        # ANCHOR AFTER 20261011_193304
         chain = [c for c in dimlines.detect(img, ppf, "h")[0] if len(c["ticks"]) == 3][0]
         one = _FakeReader("tesseract", ["15'0\"", ""])
         raws = dimlines.read_chain_raw(img, chain, ppf, one)
@@ -1467,7 +1459,6 @@ class TestDebugDoesNotClobber(unittest.TestCase):
                       "the written name must go through the suffix, not be hardcoded")
 
 
-# ANCHOR BEFORE 20261011_121319
 class TestScore(unittest.TestCase):
     """The scorer is where a false agreement gets caught, so it is tested on one."""
 
@@ -1532,10 +1523,8 @@ class TestScore(unittest.TestCase):
         for r in rows:
             self.assertIn(r["w_source"], score.SOURCES)
             self.assertIn(r["d_source"], score.SOURCES)
-# ANCHOR AFTER 20261011_121319
 
 
-# ANCHOR BEFORE 20261011_122046
 class TestEmptyDimensionInputIsSaid(unittest.TestCase):
     """A run with no dimension data looked exactly like a run where matching was tried
     and failed. Both the missing file and the empty one must leave a warning."""
@@ -1567,10 +1556,8 @@ class TestEmptyDimensionInputIsSaid(unittest.TestCase):
     def test_empty_file_is_warned(self):
         w = self._warnings({"plan": "blank.png", "chains": [], "single_dimensions": []})
         self.assertTrue(any("holds no chains" in m and "segmenter only" in m for m in w), w)
-# ANCHOR AFTER 20261011_122046
 
 
-# ANCHOR BEFORE 20261011_130047
 class TestDoorwaysClosed(unittest.TestCase):
     """Rooms on the sample sheet flowed into the next space through doorways wider than
     the 2 ft gap the wall dilation closes. A door-sized gap in a straight wall must be
@@ -1593,10 +1580,8 @@ class TestDoorwaysClosed(unittest.TestCase):
         import seeded
         img, mid = self._wall_with_gap(5.0)
         self.assertEqual(seeded.line_map(img, 20.0)[201, mid], 0)
-# ANCHOR AFTER 20261011_130047
 
 
-# ANCHOR BEFORE 20261011_135305
 class TestDerivedScaleIsReportedNotUsed(unittest.TestCase):
     """A run measured everything 2.4% small because it used 73.14 px/ft derived from its
     own readings instead of the manifest's 74.94, which matches the printed overall."""
@@ -1644,10 +1629,8 @@ class TestDerivedScaleIsReportedNotUsed(unittest.TestCase):
         self.assertEqual(self._run("--use-drawing-scale")["params"]["pixels_per_foot_used"], 9.0)
         self.assertEqual(self._run("--use-drawing-scale", "--trust-manifest")
                          ["params"]["pixels_per_foot_used"], 10.0)
-# ANCHOR AFTER 20261011_135305
 
 
-# ANCHOR BEFORE 20261011_135536
 class TestScoreContainment(unittest.TestCase):
     """The attic merged with the roof through a broken wall and scored better, because its
     depth is not printed. A region reaching past its room's box must be flagged, and if it
@@ -1700,10 +1683,8 @@ class TestScoreContainment(unittest.TestCase):
         code, s = self._run([5358, 1452, 7380, 1864])
         self.assertEqual(s["outside"], [])
         self.assertEqual(s["within_tol_and_contained"], ["ATTIC"])
-# ANCHOR AFTER 20261011_135536
 
 
-# ANCHOR BEFORE 20261011_140528
 class TestCornerDoorClosed(unittest.TestCase):
     """Door 13 on the sample sheet sits at a corner with a 0.88 ft jamb above it. The wall
     map dropped the jamb, so there was nothing to close the door from and both rear
@@ -1727,10 +1708,8 @@ class TestCornerDoorClosed(unittest.TestCase):
         import seeded
         img, mid = self._corner(4.0)
         self.assertEqual(seeded.line_map(img, 20.0)[mid, 400], 0)
-# ANCHOR AFTER 20261011_140528
 
 
-# ANCHOR BEFORE 20261011_142247
 class TestMatchOnlyWhereADimensionCanBelong(unittest.TestCase):
     """A first-floor chain was matched to a second-floor bedroom, and the attic's width
     to the room below it. Two plans side by side at 10 px/ft: plan A x 50..350,
@@ -1807,10 +1786,8 @@ class TestMatchOnlyWhereADimensionCanBelong(unittest.TestCase):
         share_across_bands(rooms, ppf=20.0)
         self.assertEqual(rooms[1]["chain_borrowed_from"]["depth"],
                          "BEDROOM B (chain joints, v chain at 40)")
-# ANCHOR AFTER 20261011_142247
 
 
-# ANCHOR BEFORE 20261011_144059
 class TestLoneOutcomesAreKept(unittest.TestCase):
     """The dimension file kept only counts, so nobody could say which candidate was
     unreadable or look at what the reader had been shown."""
@@ -1850,10 +1827,8 @@ class TestLoneOutcomesAreKept(unittest.TestCase):
         self.assertAlmostEqual(parse_length("7'0/2\""), 7 + 0.5 / 12)
         self.assertAlmostEqual(parse_length("7'10 1/2\""), 7.875)
         self.assertAlmostEqual(parse_length("4'2/ \""), 4 + 2 / 12.0)
-# ANCHOR AFTER 20261011_144059
 
 
-# ANCHOR BEFORE 20261011_152314
 class TestDashedFeetAndInches(unittest.TestCase):
     """7'-10 1/2" parsed as 7'0": the dash stopped the inches, silently, ten and a half
     inches short. Most CAD sheets write lengths that way."""
@@ -1872,10 +1847,8 @@ class TestDashedFeetAndInches(unittest.TestCase):
                          ("7'0/2\"", 7 + 0.5 / 12), ("- 12'3, \"", 12.25)):
             self.assertAlmostEqual(P(text), ft, msg=text)
         self.assertIsNone(P("2'-10\" x 6'-7\" x 1 1/2\""), "several lengths stay ambiguous")
-# ANCHOR AFTER 20261011_152314
 
 
-# ANCHOR BEFORE 20261011_154150
 class TestEraseOnlyWhatAReadingProves(unittest.TestCase):
     """Two guards built on shape broke walls. Only a line carrying a believed reading
     may leave the wall mask; a line nothing read stays, whatever it looks like."""
@@ -1936,10 +1909,8 @@ class TestReadingsOnABrokenUpLine(unittest.TestCase):
         self.assertEqual(rec["segments"][2]["raw_text"], "40'0\"")
         self.assertEqual(rec["segments"][2]["outcome"], "disagreed")
         self.assertEqual(rec["segments"][0]["outcome"], "unreadable")
-# ANCHOR AFTER 20261011_154150
 
 
-# ANCHOR BEFORE 20261011_171543
 class TestErasureLeavesCrossingWalls(unittest.TestCase):
     """Erasing a horizontal dimension line cut the bath's west wall where the line
     crossed it; the two halves fell under the 2.5 ft wall minimum and the wall left the
@@ -1954,10 +1925,8 @@ class TestErasureLeavesCrossingWalls(unittest.TestCase):
         lines = seeded.line_map(img, 20.0, erase=[((100, 130), (700, 130))])
         self.assertTrue(lines[105, 400] > 0 and lines[155, 400] > 0, "the wall must survive")
         self.assertEqual(int(lines[130, 600]), 0, "the dimension line itself is gone")
-# ANCHOR AFTER 20261011_171543
 
 
-# ANCHOR BEFORE 20261011_173131
 class TestChainEndArrowhead(unittest.TestCase):
     """A chain whose line ran on to the wall it measures to had no joint there, because
     the wall is too long to be a tick, so its last stretch (18'7" at the bottom of BED
@@ -2001,10 +1970,8 @@ class TestChainEndArrowhead(unittest.TestCase):
         img, line = self._sheet("cross")
         dimlines.add_end_joints(img, line, self.PPF)
         self.assertNotIn("end_marks", line)
-# ANCHOR AFTER 20261011_173131
 
 
-# ANCHOR BEFORE 20261011_174013
 class TestDoubleWallCavityIsOutside(unittest.TestCase):
     """BATH and BED ROOM D are parted by two walls back to back with a cavity between
     them. A region that filled the cavity measured BATH's depth across a wall and the
@@ -2021,10 +1988,8 @@ class TestDoubleWallCavityIsOutside(unittest.TestCase):
         import score
         r = {"truth": self.BATH, "box": [6423, 3023, 7371, 3675 + 0.45 * 74.94]}
         self.assertEqual(score.containment(r, 74.94), {})
-# ANCHOR AFTER 20261011_174013
 
 
-# ANCHOR BEFORE 20261011_175231
 class TestBandSharingStaysOnOnePlan(unittest.TestCase):
     """The sample sheet carries the first and second floors side by side. BED ROOM C on
     the second floor spans the same y-band as WEST PARLOR on the first, and took the
@@ -2068,10 +2033,8 @@ class TestBandSharingStaysOnOnePlan(unittest.TestCase):
         rooms[1]["plan"] = None
         share_across_bands(rooms, ppf=20.0)
         self.assertNotIn("chain_borrowed", rooms[1])
-# ANCHOR AFTER 20261011_175231
 
 
-# ANCHOR BEFORE 20261011_180856
 class TestChainLineLeavesTheCrop(unittest.TestCase):
     """The dimension line ran through the numerals into the reader, which took it for part
     of a glyph: 13'6" came back as 43'6". The line's own rows are cleared from a piece's
@@ -2093,10 +2056,8 @@ class TestChainLineLeavesTheCrop(unittest.TestCase):
         self.assertEqual(int(crop[row, x_line]), 0, "the line is in the raw crop")
         self.assertEqual(int(out[row, x_line]), 255, "and gone from what is read")
         self.assertEqual(int(out[row, x_stroke]), 0, "the crossing stroke survives")
-# ANCHOR AFTER 20261011_180856
 
 
-# ANCHOR BEFORE 20261011_183319
 class TestLeakedRegionCannotAgree(unittest.TestCase):
     """WEST PARLOR read 15'3" x 19'4" correctly and agreed, while its region ran 1.20 ft
     past its east wall through an opening. The pipeline has no truth box, so it judges by
@@ -2132,10 +2093,8 @@ class TestLeakedRegionCannotAgree(unittest.TestCase):
         seeded.refuse_leaks(rooms, [("A", 200, 250)], self._sheet(), self.PPF)
         self.assertFalse(rooms[0]["needs_review"])
         self.assertNotIn("region_leak_ft", rooms[0])
-# ANCHOR AFTER 20261011_183319
 
 
-# ANCHOR BEFORE 20261011_184007
 class TestReadingPlacedByItsArrowheads(unittest.TestCase):
     """18'7" at the bottom of BED ROOM C is drawn 0.46 ft short, so the run across the
     partition above it is the closer fit. Its arrowheads bound the room, and they place it."""
@@ -2164,10 +2123,8 @@ class TestReadingPlacedByItsArrowheads(unittest.TestCase):
         img, chain, raws = self._sheet()
         got = dimlines.readings_as_singles(chain, raws, {"readings": 1}, 75.0, 200)
         self.assertEqual([(g["lo"], g["hi"], g["placed_by"]) for g in got], [(200, 1610, "closest fit")])
-# ANCHOR AFTER 20261011_184007
 
 
-# ANCHOR BEFORE 20261011_185022
 class TestBlankPieceIsNotRead(unittest.TestCase):
     """With the line taken out, a 0.84 ft stub held only paper and a few specks, and the
     reader answered 1'. It was believed, and turned the line into a kept chain. A piece
@@ -2191,10 +2148,8 @@ class TestBlankPieceIsNotRead(unittest.TestCase):
         raws = dimlines.read_chain_raw(gray, chain, 75.0, Says1Foot())
         self.assertEqual(calls, [])
         self.assertEqual([r["text"] for r in raws], ["", "", ""])
-# ANCHOR AFTER 20261011_185022
 
 
-# ANCHOR BEFORE 20261011_190101
 class TestSteppedCasingIsAJamb(unittest.TestCase):
     """EAST PARLOR's doors are 2'-1" and 2'-4", but their moulded jambs are drawn as steps,
     so the straight wall stopped short of each door edge and the gap measured over the
@@ -2218,10 +2173,8 @@ class TestSteppedCasingIsAJamb(unittest.TestCase):
     def test_a_straight_gap_over_a_door_stays_open(self):
         import seeded
         self.assertEqual(int(seeded.line_map(self._wall(False), 20.0)[140, 200]), 0)
-# ANCHOR AFTER 20261011_190101
 
 
-# ANCHOR BEFORE 20261011_214906
 class TestRetryOnlyWhatReadNothing(unittest.TestCase):
     """Clearing the line's ragged edge recovered 15'7" and lost 17'11" and 12'6", the widths
     of both confirmations. Used only to retry a piece that read nothing, it cannot lose a
@@ -2248,10 +2201,8 @@ class TestRetryOnlyWhatReadNothing(unittest.TestCase):
         row = 300 - (300 - max(10, int(0.8 * ppf))) - 2
         self.assertTrue((dimlines.remove_chain_line(crop, chain, ppf)[row] < 160).any())
         self.assertFalse((dimlines.remove_chain_line(crop, chain, ppf, edge=True)[row] < 160).any())
-# ANCHOR AFTER 20261011_214906
 
 
-# ANCHOR BEFORE 20261011_215006
 class TestCornerDoorCasing(unittest.TestCase):
     """Door 4 on the sample sheet sits at a corner: its casing rises off the end of the
     south wall, which runs the other way, so there was no run on the door's axis to carry
@@ -2280,10 +2231,8 @@ class TestCornerDoorCasing(unittest.TestCase):
     def test_without_a_casing_the_corner_stays_open(self):
         import seeded
         self.assertFalse(self._sealed(seeded.line_map(self._corner(False), 20.0)))
-# ANCHOR AFTER 20261011_215006
 
 
-# ANCHOR BEFORE 20261011_220947
 class TestChainConfirmedRoomInTheTrace(unittest.TestCase):
     """A room confirmed by its chains is never checked against loose printed lengths, so it
     has no list of them. The trace wrote one anyway, the previous room's, and crashed when
@@ -2303,10 +2252,8 @@ class TestChainConfirmedRoomInTheTrace(unittest.TestCase):
         rooms = seeded.build_rooms(lab, [("KITCHEN", 20, 20)], 1.0, [], [], trace=tr, chains=ask)
         self.assertFalse(rooms[0]["needs_review"])
         self.assertNotIn("aligned_printed_lengths", tr.data["rooms"][0])
-# ANCHOR AFTER 20261011_220947
 
 
-# ANCHOR BEFORE 20261012_033440
 class TestDuplicateChainsShareTheirJoints(unittest.TestCase):
     """The second-floor room widths (15'7" and 13'6") were dropped as a copy of the window
     pier chain 3.7 ft below them: the same length, a nearby row. Two first-floor chains
@@ -2406,4 +2353,3 @@ class TestFullRunErasesProvenLines(unittest.TestCase):
         geometry = script.index("python dimlines.py --lines-only")
         rooms = script.index("python seeded.py")
         self.assertTrue(reading < geometry < rooms)
-# ANCHOR AFTER 20261012_033440

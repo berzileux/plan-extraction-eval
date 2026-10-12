@@ -143,7 +143,6 @@ def candidate_lines(gray, ppf):
     return out
 
 
-# ANCHOR BEFORE 20261011_173128
 def _ray_ink(ink, x, y, dx, dy, r0, r1, skip):
     """Share of ink along a ray from (x, y), leaving out points within `skip` rows of y."""
     hits = n = 0
@@ -251,7 +250,6 @@ def add_end_joints(gray, line, ppf):
         line["ticks"] = sorted(t + marks)
         line["end_marks"] = sorted(marks)
     return line
-# ANCHOR AFTER 20261011_173128
 
 
 def span_px(line):
@@ -264,7 +262,6 @@ def drop_duplicate_chains(chains, ppf):
 
     Keep the one with more joints, since an overall carries only its arrowheads.
     """
-    # ANCHOR BEFORE 20261012_033432
     # A copy has every joint on a joint of the other line: the same line found twice, or
     # an overall whose joints are its ends and the chain's extension lines running on
     # through it. Equal length and a nearby row are not enough. Room widths drawn over the
@@ -274,16 +271,13 @@ def drop_duplicate_chains(chains, ppf):
 
     def joints_on(a, b):
         return all(any(abs(x - y) <= tol for y in b["ticks"]) for x in a["ticks"])
-    # ANCHOR AFTER 20261012_033432
     kept = []
     for c in sorted(chains, key=lambda c: (-span_px(c), -len(c["ticks"]))):
         near = None
         for k in kept:
             if (abs(span_px(k) - span_px(c)) / ppf < 1.0
                     and abs(k["y"] - c["y"]) < OVERALL_NEAR_FT * ppf
-                    # ANCHOR BEFORE 20261012_033433
                     and (joints_on(c, k) or joints_on(k, c))):
-                    # ANCHOR AFTER 20261012_033433
                 near = k
                 break
         if near is None:
@@ -323,9 +317,7 @@ def detect(gray, ppf, axis="both"):
         src = gray if ax == "h" else vertical_view(gray)
         lines = candidate_lines(src, ppf)
         chains = drop_duplicate_chains(
-            # ANCHOR BEFORE 20261011_173129
             [add_end_joints(src, l, ppf) for l in lines if len(l["ticks"]) >= MIN_CHAIN_TICKS], ppf)
-            # ANCHOR AFTER 20261011_173129
         for c in chains:
             c["axis"] = ax
             # The overall is a parallel line covering the same run. It is NOT
@@ -358,9 +350,7 @@ def detect(gray, ppf, axis="both"):
         for l in single_candidates(lines, chains, ppf):
             l["axis"] = ax
             singles.append(l)
-    # ANCHOR BEFORE 20261012_033434
     mark_inside(found, gray.shape[0], ppf)
-    # ANCHOR AFTER 20261012_033434
     found.sort(key=lambda c: -span_px(c))
     singles.sort(key=lambda l: -(l["x1"] - l["x0"]))
     return found, singles
@@ -375,17 +365,14 @@ def by_axis(chains, limit):
     """
     out = []
     for ax in ("h", "v"):
-        # ANCHOR BEFORE 20261012_033435
         # Inside the building first, then the perimeter, each longest first. A perimeter
         # chain is long and regular, so on length alone it wins every slot, and it
         # measures window piers; the interior chains that measure rooms were left over.
         mine = sorted((c for c in chains if c["axis"] == ax), key=lambda c: not c.get("inside"))
         out.extend(mine[:limit])
-        # ANCHOR AFTER 20261012_033435
     return out
 
 
-# ANCHOR BEFORE 20261012_033436
 def mark_inside(chains, height, ppf):
     """Set "inside" on each chain that runs inside a building rather than around it.
 
@@ -413,10 +400,8 @@ def mark_inside(chains, height, ppf):
             and any(j < cross - tol for j in o_joints) and any(j > cross + tol for j in o_joints)
             for o, (o_cross, o_joints) in placed)
     return chains
-# ANCHOR AFTER 20261012_033436
 
 
-# ANCHOR BEFORE 20261011_153402
 # Written beside the dimension file under a name of its own, so a geometry pass can
 # never be mistaken for a reading run or replace what one wrote.
 LINES_SUFFIX = "_line_geometry"
@@ -495,7 +480,6 @@ def line_geometry(gray, ppf, dim_data):
             out["stretches"].append(rec)
     out["unmatched"] = [p["what"] for i, p in enumerate(proven) if i not in used]
     return out
-# ANCHOR AFTER 20261011_153402
 
 
 # ------------------------------------------------------------------ reading
@@ -535,9 +519,7 @@ def single_candidates(lines, chains, ppf):
     return out
 
 
-# ANCHOR BEFORE 20261011_142336
 def read_single(gray, line, ppf, reader, axis, height, why=None, record=None, crops_dir=None):
-    # ANCHOR AFTER 20261011_142336
     """Read a lone dimension line, and believe it only if it measures what it says.
 
     There is no chain total to check against here, so the line's own length is the
@@ -549,7 +531,6 @@ def read_single(gray, line, ppf, reader, axis, height, why=None, record=None, cr
     the line is, how long it is drawn, what the reader said and the outcome. With
     crops_dir, every image the reader was shown for a failed candidate is saved there.
     """
-    # ANCHOR BEFORE 20261011_142337
     lo_s, hi_s = (line["x0"], line["x1"]) if axis == "h" else (
         height - 1 - line["x1"], height - 1 - line["x0"])
     entry = {"axis": axis, "lo": int(lo_s), "hi": int(hi_s), "cross": int(line["y"]),
@@ -569,7 +550,6 @@ def read_single(gray, line, ppf, reader, axis, height, why=None, record=None, cr
                     entry["crops"].append(name)
             entry["views"] = [{"view": tag, "text": t} for tag, _, t in seen]
             record.append(entry)
-    # ANCHOR AFTER 20261011_142337
         if why is not None:
             why[key] = why.get(key, 0) + 1
             if DEBUG["on"] and detail:
@@ -590,12 +570,10 @@ def read_single(gray, line, ppf, reader, axis, height, why=None, record=None, cr
         note("the writing on it is prose, not a number",
              "writing spans %.1f ft, too long to be a dimension" % (tight.shape[1] / ppf))
         return None
-    # ANCHOR BEFORE 20261011_142338
     text = read_crop(tight, ppf, reader, axis, seen=seen)
     ft = parse_length(text)
     entry["raw_text"] = text if text else (seen[-1][2] if seen else None)
     entry["stated_ft"] = ft
-    # ANCHOR AFTER 20261011_142338
     if ft is None:
         note("unreadable", "unreadable: %r" % text)
         return None
@@ -624,10 +602,7 @@ def erase_rules(crop, ppf):
     return out
 
 
-# ANCHOR BEFORE 20261011_180853
-# ANCHOR BEFORE 20261011_214903
 def remove_chain_line(crop, chain, ppf, edge=False):
-    # ANCHOR AFTER 20261011_214903
     """Take a chain's own line out of a crop cut by crop_segment, keeping the numerals.
 
     The line runs through the middle of the number on most of the sample sheet's interior
@@ -654,7 +629,6 @@ def remove_chain_line(crop, chain, ppf, edge=False):
         r0 -= 1
     while r1 + 1 < hi and ink[r1 + 1].sum() >= 0.5 * prof.max():
         r1 += 1
-    # ANCHOR BEFORE 20261011_214904
     # With edge, the scanned line's ragged edge, a row or two deep each side, goes too.
     # Left behind it reads as a dotted line through the numerals (15'7" was lost to it),
     # but clearing it on every crop cost 17'11" and 12'6", so it is only used to retry a
@@ -665,13 +639,11 @@ def remove_chain_line(crop, chain, ppf, edge=False):
                 r0 -= 1
             if r1 + 1 < crop.shape[0] and ink[r1 + 1].sum() >= 0.1 * prof.max():
                 r1 += 1
-    # ANCHOR AFTER 20261011_214904
     out = crop.copy()
     above = ink[r0 - 2] if r0 - 2 >= 0 else np.zeros(crop.shape[1], bool)
     below = ink[r1 + 2] if r1 + 2 < crop.shape[0] else np.zeros(crop.shape[1], bool)
     out[r0:r1 + 1, ~(above | below)] = 255
     return out
-# ANCHOR AFTER 20261011_180853
 
 
 def prep(crop, target_h=64):
@@ -771,9 +743,7 @@ def crop_segment(gray, chain, a, b, ppf):
 DEBUG = {"on": False, "dir": None, "n": 0}
 
 
-# ANCHOR BEFORE 20261011_142410
 def read_crop(crop, ppf, reader, axis="h", seen=None):
-    # ANCHOR AFTER 20261011_142410
     """Try a crop with the rules erased, then as it is.
 
     A vertical chain is read in the rotated view, where the text is upright if
@@ -787,12 +757,10 @@ def read_crop(crop, ppf, reader, axis="h", seen=None):
     # fixed size, so the surrounding blank is paid for in resolution. On a short
     # segment the tight crop is almost the whole crop, so nothing is lost.
     views = []
-    # ANCHOR BEFORE 20261011_151208
     # Every run of writing on the strip, largest first: the largest is not always the
     # dimension. A circled door number beside 19'0" won on the sample sheet.
     runs = text_runs(crop, ppf)
     views += [("tight" if k == 0 else "run%d" % (k + 1), r) for k, r in enumerate(runs[:3])]
-    # ANCHOR AFTER 20261011_151208
     views += [("clean", erase_rules(crop, ppf)), ("raw", crop)]
     if axis == "v":
         views += [(tag + "+180", cv2.rotate(v, cv2.ROTATE_180)) for tag, v in list(views)]
@@ -801,12 +769,10 @@ def read_crop(crop, ppf, reader, axis="h", seen=None):
         img = prep(v)
         t = reader(img)
         tried.append("%s=%r" % (tag, t))
-        # ANCHOR BEFORE 20261011_142411
         # Exactly what the reader was shown, and what it said, so a failure can be
         # looked at rather than guessed at.
         if seen is not None:
             seen.append((tag, img, t))
-        # ANCHOR AFTER 20261011_142411
         if parse_length(t) is not None:
             if DEBUG["on"]:
                 print("        %s -> %r" % (tag, t))
@@ -829,14 +795,12 @@ def tight_text_crop(band, ppf, pad_ft=0.3):
     ink that is the right size to be text, keep the biggest run of it, and crop
     to that. Returns None when there is nothing text-shaped on the line.
     """
-    # ANCHOR BEFORE 20261011_151209
     runs = text_runs(band, ppf, pad_ft)
     return runs[0] if runs else None
 
 
 def text_runs(band, ppf, pad_ft=0.3):
     """Every run of text-sized ink on a band, cropped, largest first."""
-    # ANCHOR AFTER 20261011_151209
     ink = (erase_rules(band, ppf) < 160).astype(np.uint8)
     n, _, st, _ = cv2.connectedComponentsWithStats(ink, connectivity=8)
     lo, hi = max(2, int(0.12 * ppf)), max(6, int(1.2 * ppf))
@@ -853,7 +817,6 @@ def text_runs(band, ppf, pad_ft=0.3):
             runs[-1].append(m)
         else:
             runs.append([m])
-    # ANCHOR BEFORE 20261011_151210
     pad = max(3, int(pad_ft * ppf))
     out = []
     for run in sorted(runs, key=lambda r: -sum(m[1] - m[0] for m in r)):
@@ -864,7 +827,6 @@ def text_runs(band, ppf, pad_ft=0.3):
         if x1 - x0 >= 6 and y1 - y0 >= 6:
             out.append(band[y0:y1, x0:x1])
     return out
-    # ANCHOR AFTER 20261011_151210
 
 
 def read_overall(gray, chain, ppf, reader, max_tries=0):
@@ -910,9 +872,7 @@ def needs_expensive(measured, values):
     return sorted(singles, key=lambda i: -measured[i])
 
 
-# ANCHOR BEFORE 20261011_145542
 def read_chain_raw(gray, chain, ppf, cheap, progress=None, crops_dir=None):
-    # ANCHOR AFTER 20261011_145542
     """Read every segment of one chain. No judgement, just what came back.
 
     Reading is the expensive step and validation is free, so they are separated:
@@ -928,40 +888,28 @@ def read_chain_raw(gray, chain, ppf, cheap, progress=None, crops_dir=None):
     bounds = list(zip(ticks, ticks[1:]))
     out = []
     for a, b in bounds:
-        # ANCHOR BEFORE 20261011_180854
         c = remove_chain_line(crop_segment(gray, chain, a, b, ppf), chain, ppf)
-        # ANCHOR AFTER 20261011_180854
         text = ""
-        # ANCHOR BEFORE 20261011_145543
         seen, crops = [], []
-        # ANCHOR BEFORE 20261011_185021
         # A crop with nothing text-shaped on it is not shown to the reader, here or in the
         # wider read below: given blank paper and the last specks of the line, it answered
         # 1' on a 0.84 ft stub, and that was believed.
         if c is not None and text_runs(c, ppf):
-        # ANCHOR AFTER 20261011_185021
             if DEBUG["on"]:
                 print("      seg%02d  %5.2f ft measured" % (len(out), (b - a) / ppf))
             text = read_crop(c, ppf, cheap, chain["axis"], seen=seen)
-        # ANCHOR BEFORE 20261011_151720
         # A joint can cut through the number it carries (19'4" came out as "19" on one
         # piece and the rest on the next), so a piece that read nothing is read once
         # more across itself and its two neighbours.
         if not text and c is not None:
             k = len(out)
             wa, wb = ticks[max(0, k - 1)], ticks[min(len(ticks) - 1, k + 2)]
-            # ANCHOR BEFORE 20261011_180855
             wide = (remove_chain_line(crop_segment(gray, chain, wa, wb, ppf), chain, ppf)
                     if (wa, wb) != (a, b) else None)
-            # ANCHOR AFTER 20261011_180855
-            # ANCHOR BEFORE 20261011_185023
             if wide is not None and text_runs(wide, ppf):
-            # ANCHOR AFTER 20261011_185023
                 wseen = []
                 text = read_crop(wide, ppf, cheap, chain["axis"], seen=wseen)
                 seen += [("wide-" + tag, img, t) for tag, img, t in wseen]
-        # ANCHOR AFTER 20261011_151720
-        # ANCHOR BEFORE 20261011_214905
         # A piece that still read nothing is read once more with the line's ragged edge
         # cleared as well. Only then: a piece that read anything is never re-read, so this
         # can add a reading and cannot change one.
@@ -976,7 +924,6 @@ def read_chain_raw(gray, chain, ppf, cheap, progress=None, crops_dir=None):
                     rseen = []
                     text = read_crop(rc, ppf, cheap, chain["axis"], seen=rseen)
                     seen += [(tag + "-" + v, img, t) for v, img, t in rseen]
-        # ANCHOR AFTER 20261011_214905
         if crops_dir is not None and not text and seen:
             Path(crops_dir).mkdir(parents=True, exist_ok=True)
             for tag, img, _ in seen:
@@ -988,7 +935,6 @@ def read_chain_raw(gray, chain, ppf, cheap, progress=None, crops_dir=None):
                     "text": text, "reader": cheap.kind if text else None,
                     "views": [{"view": tag, "text": t} for tag, _, t in seen],
                     "crops": crops, "cropped": c is not None})
-        # ANCHOR AFTER 20261011_145543
         if progress:
             progress.tick()
     return out
@@ -1025,7 +971,6 @@ def scale_from_votes(votes, fallback, max_drift=None, min_votes=None):
     return near[len(near) // 2], len(near)
 
 
-# ANCHOR BEFORE 20261011_134728
 def choose_scale(manifest_ppf, derived, used=0, use_drawing=False):
     """The scale a run measures with, and the note saying what the drawing implied.
 
@@ -1043,7 +988,6 @@ def choose_scale(manifest_ppf, derived, used=0, use_drawing=False):
         return derived, said + "; the drawing was used because --use-drawing-scale is set"
     return manifest_ppf, said + ("; the manifest was used. The derived scale is reported, "
                                  "not used; pass --use-drawing-scale to use it")
-# ANCHOR AFTER 20261011_134728
 
 
 def assemble(chain, raws, ppf, expensive=None, max_expensive=4, gray=None):
@@ -1114,7 +1058,6 @@ def _overall_reader(raws):
 _READERS = {}
 
 
-# ANCHOR BEFORE 20261011_145109
 def chain_record(chain, raws, result, ppf, height):
     """What became of one chain candidate and each of its segments, kept or dropped.
 
@@ -1137,13 +1080,9 @@ def chain_record(chain, raws, result, ppf, height):
     return {"axis": chain["axis"], "cross": int(chain["y"]), "x0": int(chain["x0"]),
             "x1": int(chain["x1"]), "ticks": len(chain["ticks"]),
             "kept": is_real_chain(result), "readings": result["readings"], "segments": segs}
-# ANCHOR AFTER 20261011_145109
 
 
-# ANCHOR BEFORE 20261011_150218
-# ANCHOR BEFORE 20261011_184001
 def readings_as_singles(chain, raws, result, ppf, height, gray=None):
-    # ANCHOR AFTER 20261011_184001
     """Readings on a line that did not survive as a chain, kept as lone dimensions.
 
     An interior dimension line is crossed by beam lines, door swings and other
@@ -1159,7 +1098,6 @@ def readings_as_singles(chain, raws, result, ppf, height, gray=None):
         return []
     margin = rule("reading.merge_margin_rel")
     out = []
-    # ANCHOR BEFORE 20261011_184002
     # The draughtsman's own arrowheads say which run a number measures. Closest fit
     # assumes the drawing is to scale, and 18'7" at the bottom of BED ROOM C is drawn
     # 0.46 ft short, which makes the run across the partition above it the closer fit.
@@ -1173,7 +1111,6 @@ def readings_as_singles(chain, raws, result, ppf, height, gray=None):
             tips[(x, pointing)] = gray is not None and any(
                 p == pointing for _, p in arrow_tips(gray, chain, ppf, x - win, x + win))
         return tips[(x, pointing)]
-    # ANCHOR AFTER 20261011_184002
     for i, s in enumerate(raws):
         v = parse_length(s["text"])
         if v is None:
@@ -1187,7 +1124,6 @@ def readings_as_singles(chain, raws, result, ppf, height, gray=None):
         if not fits:
             continue
         fits.sort()
-        # ANCHOR BEFORE 20261011_184003
         marked = [f for f in fits if marked_at(raws[f[1]]["a"], -1) and marked_at(raws[f[2]]["b"], 1)]
         if marked:
             fits, placed_by = marked, "end marks"
@@ -1195,7 +1131,6 @@ def readings_as_singles(chain, raws, result, ppf, height, gray=None):
             placed_by = "closest fit"
             if len(fits) > 1 and fits[0][0] > margin * fits[1][0]:
                 continue
-        # ANCHOR AFTER 20261011_184003
         _, a, b = fits[0]
         start, end = raws[a]["a"], raws[b]["b"]
         lo, hi = (start, end) if chain["axis"] == "h" else (height - 1 - end, height - 1 - start)
@@ -1207,12 +1142,9 @@ def readings_as_singles(chain, raws, result, ppf, height, gray=None):
                     "cross": int(chain["y"]), "source": "read", "reader": s.get("reader"),
                     "raw_text": s["text"], "measured_ft": round((end - start) / ppf, 2),
                     "pieces": b - a + 1,
-                    # ANCHOR BEFORE 20261011_184004
                     "placed_by": placed_by,
-                    # ANCHOR AFTER 20261011_184004
                     "chain": "%s dimension at %d" % (chain["axis"], chain["y"])})
     return out
-# ANCHOR AFTER 20261011_150218
 
 
 def is_real_chain(result):
@@ -1261,7 +1193,6 @@ def load_manifest(path="manifest.csv"):
     return rows
 
 
-# ANCHOR BEFORE 20261012_033438
 def lone_summary(believed, tried, why):
     """The lone-dimension status line.
 
@@ -1275,7 +1206,6 @@ def lone_summary(believed, tried, why):
     if believed > own:
         text += "; %d more believed on chain lines not kept as chains" % (believed - own)
     return text
-# ANCHOR AFTER 20261012_033438
 
 
 def run_plan(name, ppf, args, cheap, expensive, group):
@@ -1308,10 +1238,8 @@ def run_plan(name, ppf, args, cheap, expensive, group):
                 print("    %s chain at %d, %d joints, span %.1f ft"
                       % (c["axis"], c["y"], len(c["ticks"]), span_px(c) / ppf))
             src = gray if c["axis"] == "h" else vertical_view(gray)
-            # ANCHOR BEFORE 20261011_145110
             raws.append(read_chain_raw(src, c, ppf, cheap, progress=bar,
                                        crops_dir=getattr(args, "crops_dir", None)))
-            # ANCHOR AFTER 20261011_145110
         st["chains"] = len(chosen)
     bar.finish()
 
@@ -1322,18 +1250,14 @@ def run_plan(name, ppf, args, cheap, expensive, group):
     # it says. Done before the scale is settled so their readings can vote on it.
     singles = singles[:args.max_singles]
     lone, single_why = [], {}
-    # ANCHOR BEFORE 20261011_142353
     single_records = []
-    # ANCHOR AFTER 20261011_142353
     if singles:
         sbar = Progress(len(singles), name + " single dimensions", quiet=DEBUG["on"])
         why = {}
         for l in singles:
             src = gray if l["axis"] == "h" else vertical_view(gray)
-            # ANCHOR BEFORE 20261011_142354
             got = read_single(src, l, ppf, cheap, l["axis"], gray.shape[0], why=why,
                               record=single_records)
-            # ANCHOR AFTER 20261011_142354
             if got:
                 lone.append(got)
             sbar.tick()
@@ -1342,26 +1266,18 @@ def run_plan(name, ppf, args, cheap, expensive, group):
 
     derived, used = scale_from_votes(chain_scale_votes(raws), ppf)
     notes = []
-    # ANCHOR BEFORE 20261011_134717
     work_ppf, note = choose_scale(ppf, derived, used,
                                   use_drawing=args.use_drawing_scale and not args.trust_manifest)
     if note:
         notes.append(note)
-    # ANCHOR AFTER 20261011_134717
 
     results, dropped = [], 0
-    # ANCHOR BEFORE 20261011_145111
     chain_records = []
-    # ANCHOR AFTER 20261011_145111
     for c, r in zip(chosen, raws):
         src = gray if c["axis"] == "h" else vertical_view(gray)
         out = assemble(c, r, work_ppf, expensive, args.max_expensive, gray=src)
-        # ANCHOR BEFORE 20261011_145112
         chain_records.append(chain_record(c, r, out, work_ppf, gray.shape[0]))
-        # ANCHOR BEFORE 20261011_184005
         lone.extend(readings_as_singles(c, r, out, work_ppf, gray.shape[0], gray=src))
-        # ANCHOR AFTER 20261011_184005
-        # ANCHOR AFTER 20261011_145112
         if is_real_chain(out):
             results.append(out)
         else:
@@ -1372,14 +1288,10 @@ def run_plan(name, ppf, args, cheap, expensive, group):
 
     out = {"plan": name, "pixels_per_foot": work_ppf, "pixels_per_foot_in_manifest": ppf,
            "single_dimensions": lone, "single_outcomes": single_why,
-           # ANCHOR BEFORE 20261011_142355
            # every lone candidate and what became of it, not only the counts
            "single_candidates": single_records,
-           # ANCHOR BEFORE 20261011_145113
            # every chain read, including those dropped for carrying no number
            "chain_candidates": chain_records,
-           # ANCHOR AFTER 20261011_145113
-           # ANCHOR AFTER 20261011_142355
            "pixels_per_foot_from_drawing": None if derived is None else round(derived, 2),
            "readings_used_for_scale": used, "chains": results, "notes": notes}
     trace.data["chains"] = results
@@ -1407,9 +1319,7 @@ def run_plan(name, ppf, args, cheap, expensive, group):
     took = time.time() - t_plan
     out["seconds"] = round(took, 1)
     out["segments_read"] = sum(len(r["segments"]) for r in results)
-    # ANCHOR BEFORE 20261012_033437
     print("  " + lone_summary(len(lone), len(singles), single_why))
-    # ANCHOR AFTER 20261012_033437
     print("  %d chain(s): %d read, %d solved, %d unknown; %d expensive call(s)"
           % (len(results),
              sum(r["readings"] for r in results),
@@ -1452,7 +1362,6 @@ def main(argv=None):
                     help="most lone dimension lines to read per plan")
     ap.add_argument("--max-expensive", type=int, default=4,
                     help="most expensive readings per chain")
-    # ANCHOR BEFORE 20261011_134729
     ap.add_argument("--trust-manifest", action="store_true",
                     help="keep the manifest scale even when the drawing disagrees. This is "
                          "the default; the flag is kept so existing scripts still run, and it "
@@ -1461,7 +1370,6 @@ def main(argv=None):
                     help="measure with the scale the drawing's own readings imply instead of "
                          "the manifest's. Off by default: the derived scale is always reported, "
                          "but on the sample sheet it has been 2 to 6 percent low in every run.")
-    # ANCHOR AFTER 20261011_134729
     ap.add_argument("--group", default=None,
                     help="group id to stamp on this run, so several layers share one")
     ap.add_argument("--debug", action="store_true",
@@ -1469,15 +1377,12 @@ def main(argv=None):
                          "could not parse, so a silent chain can be diagnosed")
     ap.add_argument("--debug-dir", default="dimlines_debug",
                     help="where --debug writes the crops that would not parse")
-    # ANCHOR BEFORE 20261011_142404
     ap.add_argument("--singles-only", action="store_true",
                     help="read the lone dimension lines only, never the chain segments, and "
                          "write <plan>_singles.json and every failed crop under --singles-dir. "
                          "Nothing in the dimension layer's own output is touched")
     ap.add_argument("--singles-dir", default=None,
                     help="where --singles-only writes; required with it")
-    # ANCHOR AFTER 20261011_142404
-    # ANCHOR BEFORE 20261011_145124
     ap.add_argument("--chains-only", default=None, metavar="LIST",
                     help="read only these chain candidates, comma separated as axis:position "
                          "or axis:position:along, e.g. v:863,h:4834:6000 (along is a point the "
@@ -1487,8 +1392,6 @@ def main(argv=None):
                     help="where --chains-only writes; required with it")
     ap.add_argument("--crops-dir", default=None,
                     help="also save the images of every chain segment that produced nothing")
-    # ANCHOR AFTER 20261011_145124
-    # ANCHOR BEFORE 20261011_153403
     ap.add_argument("--lines-only", action="store_true",
                     help="write which detected lines carry a believed reading in this plan's "
                          "dimension file, as <plan>%s.json. No reader runs, no trace is "
@@ -1497,7 +1400,6 @@ def main(argv=None):
                     help="where --lines-only writes its file")
     ap.add_argument("--dims-dir", default=str(OUT),
                     help="where --lines-only reads <plan>_dimlines.json from")
-    # ANCHOR AFTER 20261011_153403
     a = ap.parse_args(argv)
 
     if a.debug:
@@ -1512,7 +1414,6 @@ def main(argv=None):
             sys.exit("%s is not in %s" % (a.only, a.manifest))
     group = new_group(a.group)
     print("dimlines version %s, group id %s" % (rt_version(), group))
-    # ANCHOR BEFORE 20261011_153404
     if a.lines_only:
         # Geometry only. Returning before any reader is built is what keeps this in
         # seconds, and before the summary write is what keeps a reading run intact.
@@ -1544,14 +1445,12 @@ def main(argv=None):
                   % (name, len(geo["stretches"]), geo["candidates"], len(geo["unmatched"]),
                      geo["seconds"], path))
         return
-    # ANCHOR AFTER 20261011_153404
     cheap = Reader(a.reader, a.model if a.reader == "trocr" else None, threads=a.threads)
     expensive = None
     if a.expensive:
         expensive = Reader(a.expensive, a.model, a.ollama_url, a.timeout, a.threads)
     print("cheap reader %s, expensive reader %s"
           % (cheap.kind, expensive.kind if expensive else "none"))
-    # ANCHOR BEFORE 20261011_142405
     if a.singles_only:
         # The cheap loop: detection, then one read per lone line. Minutes, not the
         # half hour the chain segments take, so the reader can be worked on in turns.
@@ -1585,8 +1484,6 @@ def main(argv=None):
                   % (name, len(lone), len(singles),
                      ", ".join("%s %d" % kv for kv in sorted(why.items())), res["seconds"], path))
         return
-    # ANCHOR AFTER 20261011_142405
-    # ANCHOR BEFORE 20261011_145125
     if a.chains_only:
         # Named chain candidates only, picked from every detected line before
         # duplicates are dropped: the de-duplication discards the second-floor lower
@@ -1620,17 +1517,13 @@ def main(argv=None):
                     continue
                 c = dict(min(cands, key=lambda l: (abs(l["y"] - pos), -len(l["ticks"]))), axis=ax)
                 src = gray if ax == "h" else vertical_view(gray)
-                # ANCHOR BEFORE 20261011_173130
                 c = add_end_joints(src, c, ppf)
-                # ANCHOR AFTER 20261011_173130
                 raws = read_chain_raw(src, c, ppf, cheap, crops_dir=out_dir / "crops")
                 nseg += len(raws)
                 res = assemble(c, raws, ppf, None, gray=src)
                 results.append(res)
                 records.append(chain_record(c, raws, res, ppf, gray.shape[0]))
-                # ANCHOR BEFORE 20261011_184006
                 lone.extend(readings_as_singles(c, raws, res, ppf, gray.shape[0], gray=src))
-                # ANCHOR AFTER 20261011_184006
             res_all = {"plan": name, "pixels_per_foot": ppf,
                        "chains": [r for r in results if is_real_chain(r)],
                        "single_dimensions": lone, "chain_candidates": records,
@@ -1646,7 +1539,6 @@ def main(argv=None):
                      sum(r["readings"] for r in results if is_real_chain(r)), len(lone),
                      len(missing), res_all["seconds"], path))
         return
-    # ANCHOR AFTER 20261011_145125
 
     done = []
     for name, ppf in rows.items():
@@ -1698,10 +1590,8 @@ def chain_index(data, height):
             pos = [height - 1 - t for t in ticks][::-1]
             vals = vals[::-1]
         idx[c["axis"]].append({"pos": pos, "seg": vals,
-                               # ANCHOR BEFORE 20261011_142007
                                # where the chain sits across the axis it measures
                                "cross": int(c["y"]),
-                               # ANCHOR AFTER 20261011_142007
                                "ref": "%s chain at %d" % (c["axis"], c["y"])})
     return idx
 
@@ -1739,9 +1629,7 @@ def dimension_points(data, height):
     return out
 
 
-# ANCHOR BEFORE 20261011_141710
 def dimension_in_box(points, axis, box, pad_px=0, cover=None, reasons=None, offset_px=None):
-    # ANCHOR AFTER 20261011_141710
     """The length drawn across this room, on the given axis.
 
     Three things must hold, and the first is what makes this reliable:
@@ -1770,9 +1658,7 @@ def dimension_in_box(points, axis, box, pad_px=0, cover=None, reasons=None, offs
         if p["axis"] != axis:
             continue
         seen += 1
-        # ANCHOR BEFORE 20261011_141711
         side_pad = pad_px if offset_px is None else offset_px
-        # ANCHOR AFTER 20261011_141711
         if not (cross_lo - side_pad <= p["cross"] <= cross_hi + side_pad):
             out_of_band += 1
             continue

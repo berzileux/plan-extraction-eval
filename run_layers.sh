@@ -133,12 +133,10 @@ if [ -n "$DIMS" ]; then
     DIMS_ARGS+=(--expensive ollama --model "$DIMS_VLM" --ollama-url "$URL" --threads "$DIMS_THREADS")
   fi
   python dimlines.py "${DIMS_ARGS[@]}"
-  # ANCHOR BEFORE 20261012_033439
   # Which detected lines a believed reading proves, so the rooms layer keeps them out of
   # the wall map. Geometry only, a few seconds. Without it every dimension line stays in
   # the walls and cuts the rooms it runs through, whatever was read on it.
   python dimlines.py --lines-only
-  # ANCHOR AFTER 20261012_033439
   echo
 fi
 

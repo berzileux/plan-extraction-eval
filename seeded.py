@@ -285,8 +285,6 @@ def find_seeds(items, ppf, lexicon=None, trace=None):
     return seeds
 
 
-# ANCHOR BEFORE 20261011_130201
-# ANCHOR BEFORE 20261011_191736
 def extend_casings(walls, ink, axis, ppf):
     """Carry each straight wall on through the casing drawn at its end.
 
@@ -327,10 +325,8 @@ def extend_casings(walls, ink, axis, ppf):
                 else:
                     out[max(0, c - half):c + half + 1, a:b + 1] = 255
     return out
-# ANCHOR AFTER 20261011_191736
 
 
-# ANCHOR BEFORE 20261011_215004
 def corner_casings(walls, ink, axis, ppf):
     """The jamb of a door at a corner, carried on from the end of the perpendicular wall.
 
@@ -375,18 +371,14 @@ def corner_casings(walls, ink, axis, ppf):
                     else:
                         out[max(0, e - half):e + half + 1, a:b + 1] = 255
     return out
-# ANCHOR AFTER 20261011_215004
 
 
 def line_map(gray, ppf, min_ft=2.5, erase=None):
-    # ANCHOR AFTER 20261011_130201
     _, ink = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY_INV)
-    # ANCHOR BEFORE 20261011_153431
     # Dimension lines proven by a believed reading are taken out before the opening
     # below, so what is left of one, under its text or beside a wall, is too short to
     # survive it and cannot stand in for a wall. erase is ((x0, y0), (x1, y1)) in this
     # image's pixels.
-    # ANCHOR BEFORE 20261011_164624
     # A line is taken out only of the ink its own direction's walls are built from. Cut
     # out of all the ink, a horizontal dimension line also cut every wall it crossed,
     # and a wall stub left under 2.5 ft vanished: the bath's west wall above its door
@@ -398,18 +390,14 @@ def line_map(gray, ppf, min_ft=2.5, erase=None):
         for (x0, y0), (x1, y1) in erase:
             target = ink_h if abs(x1 - x0) >= abs(y1 - y0) else ink_v
             cv2.line(target, (int(round(x0)), int(round(y0))), (int(round(x1)), int(round(y1))), 0, width)
-    # ANCHOR AFTER 20261011_153431
     L = max(5, int(min_ft * ppf))
     hor = cv2.morphologyEx(ink_h, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_RECT, (L, 1)))
     ver = cv2.morphologyEx(ink_v, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_RECT, (1, L)))
-    # ANCHOR AFTER 20261011_164624
-    # ANCHOR BEFORE 20261011_125831
     # Doorways are gaps in a straight wall. Bridging each wall along its own direction
     # closes them without thickening the wall or reaching round a corner, so a room stops
     # at its door instead of flowing into the next one.
     door = int(ruleset.rule("segmentation.door_max_ft") * ppf)
     if door > 1:
-        # ANCHOR BEFORE 20261011_140431
         # A door at a corner has a short jamb on one side, shorter than any wall the
         # opening above keeps, so the closing below had nothing to bridge from. Short
         # straight runs that touch a kept wall are jambs and go back in first.
@@ -420,31 +408,21 @@ def line_map(gray, ppf, min_ft=2.5, erase=None):
             _, cc = cv2.connectedComponents(short, connectivity=8)
             touching = np.unique(cc[(kept > 0) & (short > 0)])
             lines_on_axis[np.isin(cc, touching[touching > 0])] = 255
-        # ANCHOR AFTER 20261011_140431
-        # ANCHOR BEFORE 20261011_191735
         hor = extend_casings(hor, ink_h, "h", ppf)
         ver = extend_casings(ver, ink_v, "v", ppf)
-        # ANCHOR BEFORE 20261011_215005
         jambs_v, jambs_h = corner_casings(hor, ink_v, "h", ppf), corner_casings(ver, ink_h, "v", ppf)
         ver, hor = cv2.bitwise_or(ver, jambs_v), cv2.bitwise_or(hor, jambs_h)
-        # ANCHOR AFTER 20261011_215005
-        # ANCHOR AFTER 20261011_191735
         hor = cv2.morphologyEx(hor, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_RECT, (door, 1)))
         ver = cv2.morphologyEx(ver, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_RECT, (1, door)))
-    # ANCHOR AFTER 20261011_125831
     return cv2.bitwise_or(hor, ver)
 
 
-# ANCHOR BEFORE 20261011_130202
 def segment(gray, ppf, seeds_xy, gap_ft=2.0, bg_far_ft=15.0, bg_boxes=None, erase=None):
-    # ANCHOR AFTER 20261011_130202
     """Label-seeded watershed. Returns an int label image: 0 = wall/none, i = seed i
     (1-based), len(seeds)+1 = background. bg_boxes: (x0,y0,x1,y1) areas planted as background
     (title block, legend, tables) so no room can grow into them."""
     from skimage.segmentation import watershed
-    # ANCHOR BEFORE 20261011_130203
     lines = line_map(gray, ppf, erase=erase)
-    # ANCHOR AFTER 20261011_130203
     r = max(1, int(gap_ft * ppf / 2))
     walls = cv2.dilate(lines, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1)))
     free = walls == 0
@@ -709,7 +687,6 @@ def clean_raw_texts(texts, max_items=40, max_chars=1500):
     return out
 
 
-# ANCHOR BEFORE 20261011_142008
 def plan_extents(lab, ext, gap_px):
     """Each floor plan's footprint, from the regions themselves, in working pixels.
 
@@ -804,13 +781,10 @@ def is_partition(lines, axis, at, plan, side, min_px, skip_px):
     span = (lines[y0 + skip_px:y0 + min_px, max(0, a - 1):a + 2] if side == "low"
             else lines[y1 - min_px:y1 - skip_px, max(0, a - 1):a + 2])
     return span.size > 0 and (span > 0).any(axis=1).mean() >= 0.8
-# ANCHOR AFTER 20261011_142008
 
 
 def chain_lookup(chain_data, full_height, scale, wppf, trace=None, tol_ft=None, near_ft=None,
-                 # ANCHOR BEFORE 20261011_142009
                  lab=None, ext=None, lines=None):
-    # ANCHOR AFTER 20261011_142009
     """Give build_rooms a way to ask "what do the chains say this room measures?".
 
     Geometry runs on a shrunken copy of the sheet while the chains were found on
@@ -836,7 +810,6 @@ def chain_lookup(chain_data, full_height, scale, wppf, trace=None, tol_ft=None, 
 
     near_px = near_ft * wppf / max(scale, 1e-9)
 
-    # ANCHOR BEFORE 20261011_142010
     # With the regions and the wall map at hand, a dimension may only measure a room it
     # can belong to: on the same plan, not across an interior wall, and on a perimeter
     # chain only between joints that are partitions. Without them (a bare chain file)
@@ -932,7 +905,6 @@ def chain_lookup(chain_data, full_height, scale, wppf, trace=None, tol_ft=None, 
             why.append("refused%s: %s" % (" at the name" if from_point else "",
                                           ", ".join("%d %s" % (n, r) for r, n in sorted(refused.items()))))
         return out
-    # ANCHOR AFTER 20261011_142010
 
     def ask(bbox, seed=None):
         box = tuple(v / scale for v in bbox)
@@ -944,7 +916,6 @@ def chain_lookup(chain_data, full_height, scale, wppf, trace=None, tol_ft=None, 
         # where the draughtsman put the text, but it is how the sheet is meant to
         # be read and it catches rooms whose walls are not chain joints.
         out, log = {}, []
-        # ANCHOR BEFORE 20261011_141636
         rules = {}
         room_plan = plan_of(tuple(bbox), plans, margin_rel) if geo else None
         for key, axis in (("width", "h"), ("depth", "v")):
@@ -981,11 +952,8 @@ def chain_lookup(chain_data, full_height, scale, wppf, trace=None, tol_ft=None, 
                 log += ["%s: %s" % (key, w) for w in why]
         out["log"] = log
         out["rules"] = rules
-        # ANCHOR BEFORE 20261011_175226
         if geo:
             out["plan"] = room_plan
-        # ANCHOR AFTER 20261011_175226
-        # ANCHOR AFTER 20261011_141636
         return out
 
     if trace is not None:
@@ -997,11 +965,9 @@ def chain_lookup(chain_data, full_height, scale, wppf, trace=None, tol_ft=None, 
 def build_rooms(lab, seeds, ppf, items, dims, trace=None, chains=None):
     rooms = []
     for i, (name, sx, sy) in enumerate(seeds, start=1):
-        # ANCHOR BEFORE 20261011_220945
         # Set only for a room that was checked against printed lengths; a room confirmed by
         # its chains never is, and used to inherit the previous room's list in the trace.
         trace_considered = None
-        # ANCHOR AFTER 20261011_220945
         mask = region_mask(lab, i, (sx, sy), ppf)
         px = int(mask.sum())
         if px == 0:
@@ -1035,17 +1001,13 @@ def build_rooms(lab, seeds, ppf, items, dims, trace=None, chains=None):
         from_chain = chains(bbox, (sx, sy)) if chains else None
         if from_chain:
             rm["match_log"] = from_chain.pop("log", [])
-            # ANCHOR BEFORE 20261011_175227
             # The plan the room sits on, so a value is only ever shared within one plan.
             if "plan" in from_chain:
                 rm["plan"] = from_chain.pop("plan")
-            # ANCHOR AFTER 20261011_175227
-            # ANCHOR BEFORE 20261011_141702
             # Which rule gave each side, and from which chain, so a value lent to a
             # neighbour carries where it came from.
             rm["chain_rules"] = from_chain.pop("rules", {})
             rm["chain_side_refs"] = {k: v[1] for k, v in from_chain.items() if v}
-            # ANCHOR AFTER 20261011_141702
             rm["chain_sides"] = {k: (None if not v else round(v[0], 3))
                                  for k, v in from_chain.items()}
         if from_chain and from_chain["width"] and from_chain["depth"]:
@@ -1127,9 +1089,7 @@ def build_rooms(lab, seeds, ppf, items, dims, trace=None, chains=None):
                       "stated_sqft", "dims_source", "agreement_gap_pct", "side_errors_pct"):
                 if k in rm:
                     ent[k] = rm[k]
-            # ANCHOR BEFORE 20261011_220946
             if not pair and solidity >= 0.75 and trace_considered is not None:
-            # ANCHOR AFTER 20261011_220946
                 ent["aligned_printed_lengths"] = trace_considered
                 ent["tolerance"] = 0.08
             trace.add("rooms", ent)
@@ -1138,10 +1098,8 @@ def build_rooms(lab, seeds, ppf, items, dims, trace=None, chains=None):
     return rooms
 
 
-# ANCHOR BEFORE 20261011_175230
 # What a room carries for its plan when no plans were worked out for the sheet.
 _NO_PLANS = "no plans found"
-# ANCHOR AFTER 20261011_175230
 
 
 def share_across_bands(rooms, ppf, tol_ft=None, gap_tol=10.0):
@@ -1166,28 +1124,22 @@ def share_across_bands(rooms, ppf, tol_ft=None, gap_tol=10.0):
     # width only if both reach from the same left wall to the same right wall; if
     # their extents differ, their widths differ, and borrowing would be wrong.
     known = {"width": [], "depth": []}
-    # ANCHOR BEFORE 20261011_141715
     # Only a value found on the room's own walls is lent. The name rule answers for
     # rooms whose outline is wrong; lending such a value would give a neighbour a
     # number nobody checked against the neighbour's walls.
     rank = {"chain joints": 1, "in the room": 2, "at the name": 3}
     lend_max = ruleset.rule("matching.lend_max_rule")
-    # ANCHOR AFTER 20261011_141715
     for r in rooms:
         sides = r.get("chain_sides") or {}
         for side in ("width", "depth"):
             if sides.get(side):
-                # ANCHOR BEFORE 20261011_141716
                 how = (r.get("chain_rules") or {}).get(side)
                 if how is not None and rank.get(how, 99) > lend_max:
                     continue
                 origin = "%s (%s, %s)" % (r["label"], how or "unrecorded",
                                           (r.get("chain_side_refs") or {}).get(side, "?"))
-                # ANCHOR BEFORE 20261011_175228
                 known[side].append((_extent(r["bbox"], side), sides[side], r["label"], origin,
                                     r.get("plan", _NO_PLANS)))
-                # ANCHOR AFTER 20261011_175228
-                # ANCHOR AFTER 20261011_141716
 
     for r in rooms:
         sides = r.get("chain_sides")
@@ -1197,8 +1149,6 @@ def share_across_bands(rooms, ppf, tol_ft=None, gap_tol=10.0):
             if sides.get(side):
                 continue
             extent = _extent(r["bbox"], side)
-            # ANCHOR BEFORE 20261011_141717
-            # ANCHOR BEFORE 20261011_175229
             # A sheet can carry two plans side by side, and a room on one spans the same
             # band as rooms on the other without sharing a wall with them: BED ROOM C took
             # the first floor's WEST PARLOR depth that way. Only a room on the same plan
@@ -1208,13 +1158,11 @@ def share_across_bands(rooms, ppf, tol_ft=None, gap_tol=10.0):
             for other, ft, label, origin, there in known[side]:
                 if there != here or here is None:
                     continue
-                # ANCHOR AFTER 20261011_175229
                 if abs(other[0] - extent[0]) <= tol and abs(other[1] - extent[1]) <= tol:
                     sides[side] = ft
                     r.setdefault("chain_borrowed", {})[side] = label
                     r.setdefault("chain_borrowed_from", {})[side] = origin
                     break
-            # ANCHOR AFTER 20261011_141717
         if not (sides.get("width") and sides.get("depth")):
             continue
         stated = sides["width"] * sides["depth"]
@@ -1256,7 +1204,6 @@ def sides_agree(bbox, ppf, width_ft, depth_ft, tol=None):
     return (abs(err["width"]) <= tol * 100 and abs(err["depth"]) <= tol * 100), err
 
 
-# ANCHOR BEFORE 20261011_183316
 def walls_seen_from(lines, seed, ppf):
     """The wall a room's label sees on each side, in working pixels, or None.
 
@@ -1321,7 +1268,6 @@ def refuse_leaks(rooms, seeds, lines, ppf, trace=None):
             ent["verified"] = False
             ent["region_leak_ft"] = leak
             ent.setdefault("reasons", []).insert(0, why)
-# ANCHOR AFTER 20261011_183316
 
 
 def _extent(bbox, side):
@@ -1370,9 +1316,7 @@ def draw_overlay(bgr, lab, ext, rooms, seeds, ppf):
 def read_plan(img, ppf, fast=False, vertical=True, lexicon=None, workers=None, log=print,
               florence_run=None, tesseract=True, trace=None, sam=None,
               dimension_reader=True, layout=None, layout_conf=0.25, chain_data=None,
-              # ANCHOR BEFORE 20261011_153433
               line_geometry=None):
-    # ANCHOR AFTER 20261011_153433
     """Full seeded read of one image. Returns (rooms, lab, ext, work_img, work_ppf, seeds).
     trace: a trace.Trace to record every stage and decision. sam: a SAM 2 predictor for the
     optional second opinion (see sam_check.py); its masks are left in rooms as sam_* fields.
@@ -1511,7 +1455,6 @@ def read_plan(img, ppf, fast=False, vertical=True, lexicon=None, workers=None, l
         return [], np.zeros(wimg.shape[:2], np.int32), 1, wimg, wppf, []
     wgray = cv2.cvtColor(wimg, cv2.COLOR_BGR2GRAY)
     wblocks = [tuple(v * s for v in b) for b in block_px]
-    # ANCHOR BEFORE 20261011_153434
     # Lines a believed reading proves are dimensions, in working pixels. With no geometry
     # file this stays None and segmentation is exactly what it was.
     werase = None
@@ -1523,19 +1466,12 @@ def read_plan(img, ppf, fast=False, vertical=True, lexicon=None, workers=None, l
             len(werase) if werase is not None else "no line geometry for this plan")
     lab, ext = timed("segment", lambda: segment(wgray, wppf, [(x, y) for _, x, y in wseeds], bg_boxes=wblocks, erase=werase),
                      seeds=len(wseeds), working_ppf=round(wppf, 2))
-    # ANCHOR AFTER 20261011_153434
-    # ANCHOR BEFORE 20261011_183317
     wlines = line_map(wgray, wppf, erase=werase)
-    # ANCHOR AFTER 20261011_183317
     rooms = build_rooms(lab, wseeds, wppf, witems, wdims, trace=trace,
-                        # ANCHOR BEFORE 20261011_141703
                         chains=chain_lookup(chain_data, img.shape[0], s, wppf, trace,
                                             lab=lab, ext=ext,
                                             lines=wlines))
-                        # ANCHOR AFTER 20261011_141703
-    # ANCHOR BEFORE 20261011_183318
     refuse_leaks(rooms, wseeds, wlines, wppf, trace)
-    # ANCHOR AFTER 20261011_183318
     if sam is not None:
         import sam_check
         sms = timed("sam2 masks", lambda: sam_check.sam_masks(sam, wimg, [(x, y) for _, x, y in wseeds], wppf))
@@ -1595,14 +1531,12 @@ def main():
                     help="group id of this run, the middle part of every trace id. Default: GROUP_ID from "
                          "the environment (run_layers.sh sets it once per run), else the time now")
     ap.add_argument("--lexicon-extra", default="", help="comma-separated extra room words, e.g. OFFICE,SCULLERY")
-    # ANCHOR BEFORE 20261011_134731
     ap.add_argument("--use-drawing-scale", action="store_true",
                     help="measure with the scale the dimension layer derived from the drawing's "
                          "readings instead of the manifest's. Off by default: it is always "
                          "reported, but on the sample sheet it has been 2 to 6 percent low")
     ap.add_argument("--trust-manifest", action="store_true",
                     help="keep the manifest scale (the default); wins over --use-drawing-scale")
-    # ANCHOR AFTER 20261011_134731
     args = ap.parse_args()
 
     lex = None
@@ -1686,7 +1620,6 @@ def main():
         if msg:
             print("  dimensions: " + msg)
             trace.warn(msg)
-        # ANCHOR BEFORE 20261011_153435
         # Optional: which dimension lines a believed reading proves (dimlines.py
         # --lines-only). Read here rather than required, so a plan without it segments
         # as before.
@@ -1700,8 +1633,6 @@ def main():
             if line_geo is not None:
                 print("  line geometry: %d proven dimension line(s) kept out of the walls"
                       % len(line_geo.get("stretches") or []))
-        # ANCHOR AFTER 20261011_153435
-        # ANCHOR BEFORE 20261011_134730
         if chain_data and chain_data.get("pixels_per_foot_from_drawing"):
             ppf, note = dimlines.choose_scale(
                 ppf, float(chain_data["pixels_per_foot_from_drawing"]),
@@ -1712,17 +1643,12 @@ def main():
                 trace.warn(note)
         # The scale actually measured with, so a scorer never has to infer it from a note.
         trace.data["params"]["pixels_per_foot_used"] = ppf
-        # ANCHOR AFTER 20261011_134730
         rooms, lab, ext, wimg, wppf, wseeds = read_plan(
             img, ppf, fast=args.fast, vertical=not args.no_vertical, lexicon=lex,
             florence_run=frun, tesseract=args.engine != "florence", trace=trace, sam=sam,
-            # ANCHOR BEFORE 20261011_130321
             dimension_reader=not args.no_dimension_reader,
-            # ANCHOR AFTER 20261011_130321
             layout=layout, layout_conf=args.layout_conf,
-            # ANCHOR BEFORE 20261011_153436
             chain_data=chain_data, line_geometry=line_geo)
-            # ANCHOR AFTER 20261011_153436
         overlay = draw_overlay(wimg, lab, ext, rooms, wseeds, wppf)
         out_name = Path(name).stem + "_seeded_overlay.png"
         cv2.imwrite(str(out_dir / "out" / out_name), overlay)

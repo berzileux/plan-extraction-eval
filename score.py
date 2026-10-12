@@ -1,4 +1,3 @@
-# ANCHOR BEFORE 20261011_121236
 """
 Score a run against the printed sizes in truth.csv.
 
@@ -62,7 +61,6 @@ def load_truth(path):
     return rows
 
 
-# ANCHOR BEFORE 20261011_135329
 def sheet_ppf(trace):
     """The scale the run measured the full sheet with."""
     if trace["params"].get("pixels_per_foot_used"):
@@ -79,7 +77,6 @@ def sheet_ppf(trace):
 def full_scale(trace):
     """Factor from the working image the regions were grown on to the full sheet."""
     ppf = sheet_ppf(trace)
-    # ANCHOR AFTER 20261011_135329
     wppf = next((st["working_ppf"] for st in trace.get("stages") or []
                  if st.get("stage") == "segment" and st.get("working_ppf")), None)
     if not wppf:
@@ -104,16 +101,13 @@ def regions_from(trace, results_rooms=None):
             "area": ent.get("area_sqft", 0.0),
             "stated": rm.get("stated_dims_ft", ent.get("stated_dims_ft")),
             "agreed": agreed,
-            # ANCHOR BEFORE 20261011_135327
             "box": ([ent["bbox"][0] * k, ent["bbox"][1] * k,
                      (ent["bbox"][2] + 1) * k, (ent["bbox"][3] + 1) * k]
                     if ent.get("bbox") else None),
-            # ANCHOR AFTER 20261011_135327
         })
     return out
 
 
-# ANCHOR BEFORE 20261011_135328
 def containment(r, ppf):
     """How far a region reaches past its own room's box, side by side, in feet.
 
@@ -129,14 +123,11 @@ def containment(r, ppf):
     b = t["box"]
     reach = {"left": b[0] - x0, "top": b[1] - y0, "right": x1 - b[2], "bottom": y1 - b[3]}
     margin = ruleset.rule("scoring.containment_margin_ft")
-    # ANCHOR BEFORE 20261011_174012
     # The margin is one wall's thickness, also where two walls stand back to back with a
     # cavity between them. The region's own wall face is a barrier in the mask, so a
     # region in the cavity got there through an opening, and its measured side then
     # carries a wall and the cavity: it is outside its room.
-    # ANCHOR AFTER 20261011_174012
     return {side: round(px / ppf, 2) for side, px in reach.items() if px / ppf > margin}
-# ANCHOR AFTER 20261011_135328
 
 
 def assign(regions, truth):
@@ -154,13 +145,11 @@ def judge_agreement(r, tol):
     t = r["truth"]
     if t is None:
         return "agreed on a region that is no room on the drawing"
-    # ANCHOR BEFORE 20261011_135420
     # A size that agrees on a region reaching through a wall agrees by coincidence: the
     # area it would hand on is not the room's.
     if r.get("outside"):
         return "region reaches outside the room: %s" % ", ".join(
             "%s %.2f ft" % kv for kv in sorted(r["outside"].items()))
-    # ANCHOR AFTER 20261011_135420
     for i, side in enumerate(("w", "d")):
         if t[side] is None:
             return "the drawing prints no %s for this room" % ("width", "depth")[i]
@@ -172,12 +161,10 @@ def judge_agreement(r, tol):
     return None
 
 
-# ANCHOR BEFORE 20261011_135421
 def score_plan(plan, regions, truth, tol, ppf=None):
     assign(regions, truth)
     for r in regions:
         r["outside"] = containment(r, ppf) if ppf else {}
-    # ANCHOR AFTER 20261011_135421
     by_room = {t["room"]: [r for r in regions if r["truth"] is t] for t in truth}
     found = [t["room"] for t in truth if by_room[t["room"]]]
     primary = {name: max(rs, key=lambda r: r["area"]) for name, rs in by_room.items() if rs}
@@ -185,9 +172,7 @@ def score_plan(plan, regions, truth, tol, ppf=None):
     errs = {"printed": {"width": [], "depth": []}, "band": {"width": [], "depth": []}}
     within = {tol: 0, 0.04: 0}
     scored_rooms = 0
-    # ANCHOR BEFORE 20261011_135423
     within_contained = []
-    # ANCHOR AFTER 20261011_135423
     for t in truth:
         r = primary.get(t["room"])
         if r is None or not r["measured"]:
@@ -204,10 +189,8 @@ def score_plan(plan, regions, truth, tol, ppf=None):
             scored_rooms += 1
             for lim in within:
                 within[lim] += all(e <= lim for e in sides)
-            # ANCHOR BEFORE 20261011_135422
             if all(e <= tol for e in sides) and not r["outside"]:
                 within_contained.append(t["room"])
-            # ANCHOR AFTER 20261011_135422
 
     def summary(pairs):
         if not pairs:
@@ -242,11 +225,9 @@ def score_plan(plan, regions, truth, tol, ppf=None):
         "regions": [{"id": r["id"], "label": r["label"],
                      "room": r["truth"]["room"] if r["truth"] else None,
                      "measured_ft": r["measured"], "agreed": r["agreed"]} for r in regions],
-        # ANCHOR BEFORE 20261011_135424
         "outside": [{"label": r["label"], "room": r["truth"]["room"], "reach_ft": r["outside"]}
                     for r in regions if r.get("outside")],
         "within_tol_and_contained": within_contained,
-        # ANCHOR AFTER 20261011_135424
     }
 
 
@@ -271,14 +252,12 @@ def print_score(s, tol):
     print("  invented regions   %d" % len(s["invented"]))
     for r in s["invented"]:
         print("    %s at %s px" % (r["label"], r["seed_px"]))
-    # ANCHOR BEFORE 20261011_135425
     print("  outside their room %d" % len(s["outside"]))
     for r in s["outside"]:
         print("    %s (%s): %s" % (r["label"], r["room"], ", ".join(
             "%s %.2f ft" % kv for kv in sorted(r["reach_ft"].items()))))
     print("  within tolerance and inside the room: %d (%s)"
           % (len(s["within_tol_and_contained"]), ", ".join(s["within_tol_and_contained"]) or "none"))
-    # ANCHOR AFTER 20261011_135425
     print("  agreed, correct    %d" % len(s["agreed_correct"]))
     print("  agreed, WRONG      %d" % len(s["agreed_wrong"]))
     for r in s["agreed_wrong"]:
@@ -314,9 +293,7 @@ def main(argv=None):
         if not rows:
             print("plan  %s: no rows in %s, not scored" % (plan, a.truth))
             continue
-        # ANCHOR BEFORE 20261011_135426
         s = score_plan(plan, regions_from(tr, rooms), rows, tol, ppf=sheet_ppf(tr))
-        # ANCHOR AFTER 20261011_135426
         s["trace_id"] = tr.get("trace_id")
         s["version"] = tr.get("version")
         print_score(s, tol)
@@ -328,4 +305,3 @@ def main(argv=None):
 
 if __name__ == "__main__":
     sys.exit(main())
-# ANCHOR AFTER 20261011_121236

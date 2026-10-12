@@ -33,7 +33,6 @@ SAME_GAP = rule("reading.same_gap_rel")
 # how far a solved value may sit from its measured length before we flag it
 SOLVE_WARN = 0.25
 
-# ANCHOR BEFORE 20261011_143436
 # A handwriting reader returns a superscript half as "/2" straight after the inches
 # (7'0 1/2" comes back as 7'0/2"), so a bare "/2" there is a half too.
 FEET_INCHES = re.compile(
@@ -44,7 +43,6 @@ FEET_INCHES = re.compile(
         \s*["”'']?""",
     re.X,
 )
-# ANCHOR AFTER 20261011_143436
 
 
 def parse_length(text):

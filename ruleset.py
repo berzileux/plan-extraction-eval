@@ -35,7 +35,6 @@ DEFAULTS = {
     "detection.single_max_text_ft": (8.0, 0.5, 100.0),
     "detection.overall_near_ft": (4.0, 0.5, 40.0),
     "detection.overall_span_tol": (0.02, 0.001, 0.5),
-    # ANCHOR BEFORE 20261011_173127
     "detection.end_mark_window_ft": (1.0, 0.1, 10.0),
     "detection.arrow_stroke_min_ft": (0.08, 0.0, 2.0),
     "detection.arrow_stroke_max_ft": (0.2, 0.02, 5.0),
@@ -44,7 +43,6 @@ DEFAULTS = {
     "detection.arrow_angle_max_deg": (60, 1, 89),
     "detection.arrow_stroke_ink": (0.8, 0.1, 1.0),
     "detection.arrow_flank_ink": (0.25, 0.0, 1.0),
-    # ANCHOR AFTER 20261011_173127
     "reading.disagree_ft": (0.45, 0.0, 10.0),
     "reading.disagree_rel": (0.04, 0.0, 1.0),
     "reading.same_gap_rel": (0.04, 0.0, 1.0),
@@ -52,22 +50,12 @@ DEFAULTS = {
     "reading.scale_min_segment_ft": (3.0, 0.5, 100.0),
     "reading.scale_max_drift": (0.25, 0.01, 2.0),
     "reading.scale_min_votes": (4, 1, 100),
-    # ANCHOR BEFORE 20261011_145936
     "reading.merge_margin_rel": (0.5, 0.05, 1.0),
-    # ANCHOR AFTER 20261011_145936
-    # ANCHOR BEFORE 20261011_135427
     "scoring.containment_margin_ft": (0.6, 0.0, 10.0),
-    # ANCHOR AFTER 20261011_135427
-    # ANCHOR BEFORE 20261011_125830
     "segmentation.door_max_ft": (3.0, 0.0, 10.0),
-    # ANCHOR BEFORE 20261011_140432
     "segmentation.jamb_min_ft": (0.75, 0.1, 5.0),
-    # ANCHOR BEFORE 20261011_191734
     "segmentation.casing_depth_ft": (0.3, 0.0, 2.0),
     "segmentation.casing_reach_ft": (1.0, 0.0, 5.0),
-    # ANCHOR AFTER 20261011_191734
-    # ANCHOR AFTER 20261011_140432
-    # ANCHOR AFTER 20261011_125830
     "matching.joint_tol_ft": (1.5, 0.1, 20.0),
     "matching.cover_rel": (0.7, 0.1, 1.0),
     "matching.band_tol_ft": (1.0, 0.05, 20.0),
@@ -75,19 +63,15 @@ DEFAULTS = {
     "matching.side_tol_rel": (0.08, 0.001, 1.0),
     "matching.text_cross_ft": (4.0, 0.0, 60.0),
     "matching.min_room_sqft": (25.0, 0.0, 10000.0),
-    # ANCHOR BEFORE 20261011_141726
     "matching.plan_gap_ft": (6.0, 1.0, 200.0),
     "matching.plan_margin_rel": (0.5, 0.05, 1.0),
     "matching.wall_faces_ft": (0.6, 0.05, 5.0),
     "matching.partition_min_ft": (3.0, 0.5, 50.0),
     "matching.box_offset_ft": (4.0, 0.0, 30.0),
     "matching.lend_max_rule": (2, 1, 3),
-    # ANCHOR BEFORE 20261011_183315
     "matching.leak_margin_ft": (0.6, 0.0, 10.0),
     "matching.leak_fan_ft": (2.0, 0.0, 20.0),
     "matching.leak_fan_step_ft": (0.25, 0.01, 5.0),
-    # ANCHOR AFTER 20261011_183315
-    # ANCHOR AFTER 20261011_141726
     "lexicon.room_cutoff": (0.82, 0.3, 1.0),
     "lexicon.modifier_cutoff": (0.85, 0.3, 1.0),
 }
