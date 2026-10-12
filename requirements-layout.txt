@@ -1,0 +1,3 @@
+# Optional layout splitter (layout_check.py). AGPL-3.0 code: read README before use. Pin versions after your own test run.
+ultralytics
+huggingface_hub

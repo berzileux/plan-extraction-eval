@@ -1,0 +1,14 @@
+# Run traces hold OCR text read from the plans and are served as plain files if copied into the image.
+viewer/trace_*.json
+viewer/group_*.json
+viewer/batch_*.json
+run_*.zip
+.venv/
+plans/
+plans_pdf/
+text_db/
+__pycache__/
+*.pt
+run_20*
+probe_*
+dimlines_debug

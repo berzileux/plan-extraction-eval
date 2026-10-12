@@ -1,0 +1,215 @@
+{
+  "_about": "Every number the engine can be tuned by, with what it is for. The code reads these; it holds no tuning constants of its own. Change a value here rather than editing a module, and say in the description why. Anything absent falls back to the built-in default in rules.py.",
+  "_units": "ft is feet on the drawing. rel is a fraction (0.04 = 4%). Values in feet are converted to pixels using the plan's scale, so they hold at any resolution.",
+  "detection": {
+    "_about": "Finding the lines and joints that carry dimensions.",
+    "line_min_ft": {
+      "value": 8.0,
+      "description": "Shortest run of ink treated as a dimension line. Below this it is a tick, a hatch or a letter stroke."
+    },
+    "line_max_thick_ft": {
+      "value": 0.25,
+      "description": "A dimension line is thin. Anything thicker is a wall, and a wall is not a dimension line."
+    },
+    "tick_min_ft": {
+      "value": 0.9,
+      "description": "Shortest stroke that can be a joint. Shorter marks are noise and dirt on the scan."
+    },
+    "tick_max_ft": {
+      "value": 12.0,
+      "description": "Longest stroke that can be a joint. Above this it is a wall. This is why an interior chain's end joint is invisible: the wall it meets is far longer, so the chain comes back one joint short."
+    },
+    "bridge_ft": {
+      "value": 0.4,
+      "description": "Gaps closed along a line before its length is measured. A dimension line is broken wherever a glyph sits on it; without this one line reads as several pieces and never matches its chain. Applied to lines only, never to ticks, which would weld neighbouring joints together."
+    },
+    "min_chain_ticks": {
+      "value": 3,
+      "description": "Joints needed before a line counts as a chain. Three, not four: an interior chain runs wall to wall and its end joint is a wall, so it arrives one short. Two joints is a lone dimension, handled separately."
+    },
+    "single_min_ft": {
+      "value": 4.0,
+      "description": "Shortest lone dimension worth reading. Below this it is a jamb or a closet, not a room."
+    },
+    "single_max_ft": {
+      "value": 60.0,
+      "description": "Longest lone dimension worth reading. Above this it is a building outline, not a room."
+    },
+    "overall_near_ft": {
+      "value": 4.0,
+      "description": "How far from a chain its printed total may be drawn."
+    },
+    "overall_span_tol": {
+      "value": 0.02,
+      "description": "How closely a total's line must span the same run as its chain."
+    },
+    "single_min_ticks": {
+      "value": 2,
+      "description": "Marks a lone dimension line needs, one at each end where it meets what it measures. This is what separates it from a title-block rule, a border or the underline of a block of notes, which are the same length and thickness and have no ends marked."
+    },
+    "single_max_text_ft": {
+      "value": 8.0,
+      "description": "Widest piece of writing on a line that could still be a dimension. A dimension is a few characters; a title or a line of notes is not, and this rejects it before a reader is called."
+    },
+    "end_mark_window_ft": {
+      "value": 1.0,
+      "description": "How far back from where a chain's line stops its end arrowhead is looked for. The arrowhead's tip touches the wall the line ends at, and the line's ink can run on through that wall, so the tip sits within about a wall's thickness of the end."
+    },
+    "arrow_stroke_min_ft": {
+      "value": 0.08,
+      "description": "Where an arrowhead stroke starts being checked, measured from the tip. Closer than this the two strokes and the line merge into one blot."
+    },
+    "arrow_stroke_max_ft": {
+      "value": 0.2,
+      "description": "Where an arrowhead stroke stops being checked. The shortest strokes on the sample sheet, at the bottom of BED ROOM C, are about this long."
+    },
+    "arrow_stroke_width_ft": {
+      "value": 0.07,
+      "description": "How far either side of a stroke there must be paper. A stroke is a pen line; a wall or a crossing band of ink is not paper on both sides."
+    },
+    "arrow_angle_min_deg": {
+      "value": 15,
+      "description": "Narrowest angle between an arrowhead stroke and its line."
+    },
+    "arrow_angle_max_deg": {
+      "value": 60,
+      "description": "Widest angle between an arrowhead stroke and its line. Hand-drawn arrowheads on the sample sheet run from about 22 to 55 degrees."
+    },
+    "arrow_stroke_ink": {
+      "value": 0.8,
+      "description": "Share of a stroke's length that must be ink."
+    },
+    "arrow_flank_ink": {
+      "value": 0.25,
+      "description": "Most ink allowed beside a stroke, on either side, over its far half."
+    }
+  },
+  "reading": {
+    "_about": "Deciding whether to believe a number that was read.",
+    "disagree_ft": {
+      "value": 0.45,
+      "description": "Fixed slack between a printed length and the length actually drawn, about five inches. A draughtsman crams the short segments, so a 2'8\" run can measure 19% short and still be correct."
+    },
+    "disagree_rel": {
+      "value": 0.04,
+      "description": "Proportional slack on longer runs, where the drawing is accurate. This is what catches a reader returning 12'0\" for a 12'6\" run. The larger of the two slacks applies."
+    },
+    "same_gap_rel": {
+      "value": 0.04,
+      "description": "Unread gaps whose drawn lengths agree this closely are treated as the same dimension repeated, and the chain's remainder is split between the groups rather than gap by gap."
+    },
+    "min_readings": {
+      "value": 2,
+      "description": "Believed readings a line needs before it counts as a chain. Stair treads and hatching produce convincing joints and carry no numbers at all."
+    },
+    "scale_min_segment_ft": {
+      "value": 3.0,
+      "description": "Shortest segment allowed to vote on the drawing's scale. Short runs are not drawn to scale and would drag the estimate around."
+    },
+    "scale_max_drift": {
+      "value": 0.25,
+      "description": "A scale vote further than this from the manifest is a misread, not a correction. A genuine manifest error is a few percent; a misread gives a wild ratio."
+    },
+    "scale_min_votes": {
+      "value": 4,
+      "description": "Readings needed before the drawing is allowed to overrule the manifest scale."
+    },
+    "merge_margin_rel": {
+      "value": 0.5,
+      "description": "On a line that did not survive as a chain, a reading is placed on the run of pieces whose drawn length it fits best, but only if that fit is clearly the best: its error at most this fraction of the runner-up's. Beam lines and door swings cut an interior dimension line into pieces, so the run is found from the number rather than from the joints; when two runs fit nearly as well, the reading is left out."
+    }
+  },
+  "segmentation": {
+    "_about": "Building the mask that rooms are grown in. Nothing here changes the drawing or any reading.",
+    "jamb_min_ft": {
+      "value": 0.75,
+      "description": "Shortest straight stub touching a wall that is kept as a door jamb, so a door at a corner can be closed. The wall map drops runs under 2.5 ft, which removed the 0.88 ft jamb beside door 13 on the sample sheet and let both rear bedrooms flow onto the stair landing. Longer than the tallest lettering on the sheet (about 0.5 ft), so letters touching a wall are not kept; shorter than the shortest jamb measured. Applies only where doors are closed."
+    },
+    "casing_depth_ft": {
+      "value": 0.3,
+      "description": "How far either side of a wall's centre line its door casing may step out. On the sample sheet the jambs of doors 4 and 8 are drawn as moulded steps up to about 0.3 ft off the wall line, and the straight wall stops at the first step, so the gap measured between straight walls was 3.1 and 3.4 ft for doors scheduled at 2'-1\" and 2'-4\"."
+    },
+    "casing_reach_ft": {
+      "value": 1.0,
+      "description": "How far past the end of a straight wall its casing may run. The stepped casings on the sample sheet run 0.6 to 0.8 ft; a wall end is carried on through ink attached to it, inside its own band, for no more than this."
+    },
+    "door_max_ft": {
+      "value": 3.0,
+      "description": "Widest doorway closed before rooms are grown. A gap this wide or narrower between two collinear stretches of wall is treated as a door and bridged in the mask only, so a room cannot flow through it into the next. Three feet is the widest common door leaf; the sample sheet's door schedule tops out at 2'10\". Door swing arcs were tried as the sign of a doorway and rejected: on this scan a circle search finds about 1800 arcs, so an arc beside a gap says nothing."
+    }
+  },
+  "scoring": {
+    "_about": "How score.py judges a run against truth.csv. Nothing here changes what the pipeline produces.",
+    "containment_margin_ft": {
+      "value": 0.6,
+      "description": "How far a region may reach past its room's box before it is flagged as outside the room. The boxes in truth.csv sit on the inner face of each wall, measured on the sheet, so a region that touches a wall can reach at most into it. The thickest wall measured on the sample sheet is 0.48 ft between faces; one working pixel (0.07 ft) and rounding make 0.6. Further than this, the region has gone through a wall or a doorway. A double wall (two walls back to back with a cavity, 0.75 ft overall between BATH and BED ROOM D) does not widen it: a region reaches the cavity only through an opening in its own wall, so a region in the cavity is outside its room."
+    }
+  },
+  "matching": {
+    "_about": "Deciding which dimension belongs to which room. Tried in this order; the first that answers wins.",
+    "joint_tol_ft": {
+      "value": 1.5,
+      "description": "Rule 1. How close a room's edge must be to a chain joint to be counted as landing on it."
+    },
+    "cover_rel": {
+      "value": 0.7,
+      "description": "Rule 2. How much of the room's extent a run must cover to be that room's dimension. Stops a closet jamb inside a room being mistaken for the room."
+    },
+    "band_tol_ft": {
+      "value": 1.0,
+      "description": "Rule 3. How closely two rooms must share a pair of walls before one lends the other its dimension. Looser than this and rooms of genuinely different size start borrowing from each other."
+    },
+    "name_near_ft": {
+      "value": 14.0,
+      "description": "Rule 4. How far from the room's name a run may be drawn and still be that room's dimension. This rule exists for rooms whose traced outline is wrong, where every other rule fails; the name is read in the right place regardless."
+    },
+    "side_tol_rel": {
+      "value": 0.08,
+      "description": "How far the measured width may sit from the printed width, and the measured depth from the printed depth, before the room is flagged. Compared side by side, never area against width times depth: a room with a stair cut out of it fills far less than its envelope and is still correct."
+    },
+    "text_cross_ft": {
+      "value": 4.0,
+      "description": "Fallback rule. How far off to the side of a region a printed length may sit and still be taken as that region's dimension. It was 12 ft, which is wider than some rooms on the sheet: the dining room's 14'10\" was taken as the east parlor's width, and the east parlor is 13'6\". Not tighter than this, because a dimension is often printed just outside the wall it measures, a foot or two clear of it. A length that belongs to a room is written in it or beside it, so this is nearly a containment test, not a search radius."
+    },
+    "min_room_sqft": {
+      "value": 25.0,
+      "description": "Below this a region is too small to be a room, whatever it agrees with."
+    },
+    "plan_gap_ft": {
+      "value": 6.0,
+      "description": "Empty width that separates two floor plans on one sheet. The plans are found from the room regions themselves: columns holding any region are grouped, and a gap wider than this starts a new plan. Rooms on one plan abut across walls and doors well under this; the two plans on the sample sheet are about 15 ft apart."
+    },
+    "plan_margin_rel": {
+      "value": 0.5,
+      "description": "A dimension belongs to the nearest plan only if that plan is at most this fraction of the distance to the next one. A chain drawn in the space between two plans, roughly equidistant, says nothing about which it measures and is not used; on the sample sheet the first floor's east chain sits 7.6 ft from one plan and 7.3 ft from the other."
+    },
+    "wall_faces_ft": {
+      "value": 0.6,
+      "description": "Two lines this close are the two faces of one wall and count as one wall when counting the walls between a room and a dimension. The thickest wall measured on the sample sheet is 0.48 ft between faces."
+    },
+    "partition_min_ft": {
+      "value": 3.0,
+      "description": "How far into the building a wall must run from a joint on a perimeter chain for that joint to be a partition. Perimeter chains are divided at window jambs, reveals a few inches deep, and at partitions, which run for a room's length. Only a distance between two partitions can be a room's dimension."
+    },
+    "box_offset_ft": {
+      "value": 4.0,
+      "description": "How far beyond a room a dimension line may be drawn and still be read as that room's, on the axis it does not measure. Drawings dimension rooms from outside them, a few feet out. A run further away, or behind any wall other than the room's own outer wall, belongs to something else."
+    },
+    "lend_max_rule": {
+      "value": 2,
+      "description": "Which matched values band sharing may lend to a neighbour: 1 only values on chain joints at the room's walls, 2 also a run spanning the room, 3 also a run found at the room's name. The name rule exists for rooms whose outline is wrong, so its value was never checked against the room's walls and must not be passed on to another room."
+    },
+    "leak_margin_ft": {
+      "value": 0.6,
+      "description": "How far a region may reach past the wall its own label sees before it is taken to have leaked through an opening. A region that touches its wall can reach into it but not past it; the thickest wall measured on the sample sheet is 0.48 ft, and one working pixel and rounding make 0.6, the same allowance the scorer gives against the truth boxes."
+    },
+    "leak_fan_ft": {
+      "value": 2.0,
+      "description": "Half-width of the fan of rays cast from a room's label to find its own walls. One ray can pass through a doorway or stop on a stair line; the median of a fan is the wall."
+    },
+    "leak_fan_step_ft": {
+      "value": 0.25,
+      "description": "Spacing of the rays in that fan."
+    }
+  }
+}

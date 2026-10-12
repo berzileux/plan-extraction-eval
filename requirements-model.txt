@@ -1,0 +1,9 @@
+numpy
+opencv-python-headless
+pillow
+einops
+timm
+torch
+transformers==4.46.3
+pymupdf
+pytesseract

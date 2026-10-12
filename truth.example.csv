@@ -1,0 +1,4 @@
+plan,room,printed_w_ft,printed_d_ft,w_source,d_source,notes,box_x0,box_y0,box_x1,box_y1
+sample_plan_01.png,KITCHEN,12.5,11.0,printed,printed,both sizes printed in the room,120,80,500,410
+sample_plan_01.png,BATH,8.0,11.0,printed,band,depth shared with KITCHEN between the same walls,520,80,760,410
+sample_plan_01.png,HALL,,,none,none,nothing printed; needs a human,120,430,760,560

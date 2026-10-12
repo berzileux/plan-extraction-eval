@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan Extraction Eval</title>
+<style>
+  :root { --ink:#14283f; --mut:#5b6b7c; --line:#d6dde5; --bad:#a63a24; --bg:#f7f9fb; }
+  body { margin:0; font:16px/1.5 system-ui,sans-serif; color:var(--ink); background:var(--bg); }
+  main { max-width:960px; margin:0 auto; padding:24px 16px 64px; }
+  h1 { font-size:1.5rem; margin:0 0 4px; }
+  .sub { color:var(--mut); margin:0 0 20px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:8px; padding:16px; margin:16px 0; }
+  img { max-width:100%; height:auto; border:1px solid var(--line); }
+  table { border-collapse:collapse; width:100%; margin-top:12px; font-size:.9rem; }
+  th,td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+  .bad { color:var(--bad); font-weight:600; }
+  .part { color:#7a5c12; }
+  .note { background:#fff8e6; border:1px solid #ecd9a0; padding:10px 12px; border-radius:6px; font-size:.9rem; }
+  details.legend { background:#fff; border:1px solid var(--line); border-radius:8px; padding:12px 16px; margin:16px 0; }
+  details.legend summary { cursor:pointer; font-weight:600; }
+  details.legend dl { margin:12px 0 0; }
+  details.legend dt { font-weight:600; margin-top:12px; }
+  details.legend dd { margin:2px 0 0; color:var(--mut); }
+  details.legend .todo { color:var(--bad); font-weight:600; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Plan Extraction Eval</h1>
+  <p class="sub">Classical CV baseline for room areas on public sample floor plans. Results are measured against hand-checked values; failures are shown on purpose.</p>
+  <details class="legend" open>
+    <summary>What the columns mean</summary>
+    <dl>
+      <dt>Measured w x d &mdash; the room's size from the pixels</dt>
+      <dd>The width and depth of the region this tool traced. Set beside the printed
+      size so the two can be compared directly: on the sample sheet the Dining Room
+      measures 14'9" x 24'6" against a printed 14'10" x 24'4", which is under one
+      percent on both sides.</dd>
+
+      <dt>Computed sq ft &mdash; what this tool worked out</dt>
+      <dd>It finds the room on the drawing, traces the walls around it, counts the
+      pixels inside, and converts to square feet using the drawing's scale. Nobody
+      typed this number in. It is only as good as that scale: if the scale is wrong
+      by 5%, every area here is wrong by about 10%, and nothing in the picture would
+      show it.</dd>
+
+      <dt>Printed size &mdash; what the architect wrote on the drawing</dt>
+      <dd>The independent check. The tool reads the dimensions off the sheet and works
+      out what the room's width and depth should be. This is the only number on the
+      drawing that did not come from this tool, so it is the only thing that can prove
+      the computed area right. A dash means nothing on the drawing could be tied to
+      this room, which is why the row still needs a human.</dd>
+
+      <dt>Gap vs printed % &mdash; how much of the room is floor</dt>
+      <dd>How far the computed area sits from the printed width times depth. A room is
+      not a rectangle: closets, chimneys and stairs are cut out of it, so this is
+      usually a real difference and not a mistake. It is reported, not judged.</dd>
+
+      <dt>What decides whether a room agrees</dt>
+      <dd>Its measured width against the printed width, and its measured depth against
+      the printed depth, each within 8%. Like against like. Comparing the floor area
+      with width times depth would fail every room that has a closet in it.</dd>
+
+      <dt>Read so far &mdash; the half of the answer already found</dt>
+      <dd>A room needs a width and a depth before it has a size. Often only one has been
+      found: the architect wrote it once, on a run this tool could read, and the other
+      side is written somewhere it could not. This column shows what has been read, so a
+      row that looks empty under Printed size is not mistaken for a row where nothing
+      was found at all.</dd>
+
+      <dt class="todo">True sq ft and Error % &mdash; not implemented yet</dt>
+      <dd>These are for measuring the tool against areas a person measured by hand and
+      typed into <code>truth.csv</code>. No such file has been made for these drawings,
+      so both columns are empty. They are the difference between "the drawing agrees
+      with itself" and "we checked it against reality", and only the second tells you
+      how accurate this tool actually is.</dd>
+    </dl>
+  </details>
+  <div id="summary"></div>
+  <div id="plans"></div>
+</main>
+<script>
+function ft(v) {
+  if (v === null || v === undefined) return "?";
+  var n = Math.round(v * 12), f = Math.floor(n / 12), i = n % 12;
+  return f + "'" + i + '"';
+}
+function el(tag, text, cls) {
+  var e = document.createElement(tag);
+  if (text !== undefined) e.textContent = text;
+  if (cls) e.className = cls;
+  return e;
+}
+fetch("results.json").then(function (r) {
+  if (!r.ok) throw new Error("no results");
+  return r.json();
+}).then(function (data) {
+  var s = document.getElementById("summary");
+  if (data.summary && data.summary.room_mape !== null) {
+    s.appendChild(el("div",
+      data.summary.rooms_scored + " rooms scored. Mean error " + data.summary.room_mape +
+      "%, worst room " + data.summary.worst_room_ape + "%.", "note"));
+  } else {
+    s.appendChild(el("div", "Not scored yet: no ground-truth values were supplied.", "note"));
+  }
+  var root = document.getElementById("plans");
+  data.plans.forEach(function (p) {
+    var c = el("div", undefined, "card");
+    c.appendChild(el("h2", p.plan));
+    if (p.group_id || p.trace_id) {
+      c.appendChild(el("div", "group " + (p.group_id || "-") + (p.trace_id ? "  |  trace " + p.trace_id : ""), "sub"));
+    }
+    if (p.quality && p.quality.banner) {
+      c.appendChild(el("div", p.quality.banner, "note"));
+    } else if (p.quality && p.quality.geometry_reliable === false) {
+      c.appendChild(el("div", "Room detection is unreliable on this plan, so the per-room results below are not meaningful. " + p.quality.reasons.join("; ") + ".", "note"));
+    }
+    var img = document.createElement("img");
+    img.src = p.overlay;
+    img.alt = "Detected rooms for " + p.plan;
+    c.appendChild(img);
+    var t = document.createElement("table");
+    var head = t.insertRow();
+    [["Room", ""], ["Label read", "what the tool read as the room name"],
+     ["Measured w x d", "the room's width and depth worked out from the pixels"],
+     ["Printed size", "what the architect wrote on the drawing, once both sides are known"],
+     ["Read so far", "the sides already found on the drawing for this room, even when the other side is still missing"],
+     ["Computed sq ft", "what the tool worked out from the pixels"],
+     ["Gap vs printed %", "how far those two are apart"],
+     ["True sq ft", "hand-measured; not implemented yet"],
+     ["Error %", "against hand-measured; not implemented yet"],
+     ["Review", ""]].forEach(function (h) {
+      var th = el("th", h[0]);
+      if (h[1]) th.title = h[1];
+      head.appendChild(th);
+    });
+    p.rooms.forEach(function (rm) {
+      var row = t.insertRow();
+      row.insertCell().textContent = "#" + rm.id;
+      row.insertCell().textContent = rm.label || "-";
+      // What the pixels say this room measures. Put next to the printed size on
+      // purpose: side by side the two are comparable at a glance, where a floor area
+      // and a width-times-depth are not.
+      var m = rm.measured_ft;
+      row.insertCell().textContent = (m && m.length === 2) ? ft(m[0]) + " x " + ft(m[1]) : "-";
+      row.insertCell().textContent = rm.stated_dims_ft
+        ? ft(rm.stated_dims_ft[0]) + " x " + ft(rm.stated_dims_ft[1])
+          + (rm.dims_source ? "  (" + rm.dims_source + ")" : "")
+        : "-";
+      // What the drawing has already given up for this room. A width with no depth is
+      // not a size, but it is not nothing either: it is the half of the answer that is
+      // already read, and it shows where the remaining work is.
+      var pc = row.insertCell();
+      var sides = rm.chain_sides || {};
+      var got = [];
+      if (sides.width) got.push("width " + ft(sides.width));
+      if (sides.depth) got.push("depth " + ft(sides.depth));
+      if (!rm.stated_dims_ft && got.length) {
+        pc.textContent = got.join(",  ") + "   (other side not found)";
+        pc.className = "part";
+      } else {
+        pc.textContent = rm.stated_dims_ft ? "both sides" : "-";
+      }
+      row.insertCell().textContent = rm.area_sqft;
+      var gc = row.insertCell();
+      gc.textContent = rm.agreement_gap_pct !== undefined ? rm.agreement_gap_pct : "-";
+      if (rm.agreement_gap_pct !== undefined && rm.agreement_gap_pct > 10) gc.className = "bad";
+      row.insertCell().textContent = rm.true_sqft !== undefined ? rm.true_sqft : "-";
+      var ec = row.insertCell();
+      ec.textContent = rm.ape !== undefined ? rm.ape : "-";
+      if (rm.ape !== undefined && rm.ape > 10) ec.className = "bad";
+      var rc = row.insertCell();
+      rc.textContent = rm.needs_review === undefined ? "-" : (rm.needs_review ? "human check: " + (rm.review_reason || "") : "ok");
+      if (rm.needs_review) rc.className = "bad";
+    });
+    c.appendChild(t);
+    if (p.plan_ape !== undefined) c.appendChild(el("p", "Whole-plan error: " + p.plan_ape + "%"));
+    root.appendChild(c);
+  });
+}).catch(function () {
+  document.getElementById("summary").appendChild(
+    el("div", "No results.json found. Run run_layers.sh first.", "note"));
+});
+</script>
+</body>
+</html>

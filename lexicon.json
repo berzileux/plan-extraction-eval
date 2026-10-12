@@ -1,0 +1,45 @@
+{
+  "_about": "The words that make a line of text a room name. This is a gazetteer, not a spell-checker: its job is to tell a room name apart from the thousand other strings on a sheet. A line with none of these words in it is not treated as a room.",
+
+  "_how_it_is_used": "Each word of an OCR line is matched against these lists, exactly first and then by close match. The name reported is the dictionary word, so 'WEST*FARLOR' is reported as 'WEST PARLOR'. The OCR's own text is kept in the trace under seeds[].ocr_text, so what was actually read can always be checked against what was reported.",
+
+  "_why_this_is_fair": "A name is only ever a seed: a point inside a room, and a label on the result. No area, dimension or agreement check depends on it. Correcting 'FARLOR' to 'PARLOR' moves no number. The risk is honesty, not accuracy, which is why the raw text stays in the trace.",
+
+  "_what_would_not_be_fair": "Words that only exist on the drawing being tested. See period_or_specific below: those are the ones to watch.",
+
+  "rooms": [
+    "KITCHEN", "DINING", "BEDROOM", "BED", "BATH", "BATHROOM", "HALL", "HALLWAY",
+    "TOILET", "TOILETS", "LIVING", "CLOSET", "PANTRY", "STUDY", "LIBRARY", "FOYER",
+    "ENTRY", "LAUNDRY", "GARAGE", "FAMILY", "NURSERY", "SUNROOM", "PORCH", "DEN",
+    "UTILITY", "MUDROOM", "LAVATORY"
+  ],
+
+  "period_or_specific": {
+    "_about": "Words that are not generic room types across all drawings. Kept separate so it is obvious what the vocabulary has been tuned to, and so a fair test can be run without them.",
+    "PARLOR": "A real room type, but period. Common on pre-war houses, rare on new build.",
+    "PARLOUR": "The same word, British spelling.",
+    "ATTIC": "A real space, labelled on plans of any age. Here because its absence cost the sample sheet a region: the attic got no seed, and its printed 27'8\" was then matched to the room below it instead.",
+    "BAY": "A bay window recess, labelled NEW BAY on the sample sheet. Without it the space gets no seed and no region.",
+    "MEMORIAL": "Not a room type at all. It is in this list because the sample sheet has a MEMORIAL ROOM. This is the vocabulary being fitted to the drawing under test, and it should be supplied per plan rather than shipped as a default."
+  },
+
+  "modifiers": [
+    "OLD", "NEW", "LATER", "WEST", "EAST", "NORTH", "SOUTH", "UPPER", "LOWER",
+    "MAIN", "GUEST", "MASTER", "FRONT", "REAR"
+  ],
+
+  "deliberately_absent": {
+    "OFFICE": "Appears in title blocks and legends on almost every sheet, so including it seeds rooms in the drawing's paperwork. Add it with --lexicon-extra OFFICE when a plan genuinely has one."
+  },
+
+  "thresholds": {
+    "room_cutoff": {
+      "value": 0.82,
+      "description": "How close an OCR word must be to a room word to be accepted as one. Lower accepts more misreads as rooms; higher loses rooms the reader mangled."
+    },
+    "modifier_cutoff": {
+      "value": 0.85,
+      "description": "The same, for modifiers. Tighter, because a wrong modifier changes which room a name refers to."
+    }
+  }
+}
