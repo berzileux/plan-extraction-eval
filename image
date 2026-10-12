@@ -4,3 +4,5 @@ python3 -c "import cv2; w=cv2.imread('plans/putnam.png').shape[1]; print(w, roun
 
 # get sizing of plans
 python3 -c "import cv2; print(cv2.imread('plans/Putnam_House_-_floor_plans.jpg').shape)"
+
+# push
