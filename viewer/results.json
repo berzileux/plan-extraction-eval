@@ -1,0 +1,1460 @@
+{
+  "method": "label-seeded regions + tiled OCR (tesseract, experimental) + local LLM interpretation (qwen2.5:3b)",
+  "plans": [
+    {
+      "plan": "synthetic_plan_p1.png",
+      "pixels_per_foot": 14.0,
+      "overlay": "out/synthetic_plan_p1_seeded_overlay.png",
+      "quality": {
+        "geometry_reliable": true,
+        "reasons": [],
+        "banner": "Experimental label-seeded mode. Each region is grown from a room name and is approximate. 2 of 4 rooms agree with a printed size; the rest need a human check."
+      },
+      "rooms": [
+        {
+          "id": 1,
+          "label": "BEDROOM 2",
+          "area_px": 45264,
+          "area_sqft": 230.9,
+          "centroid": [
+            170,
+            282
+          ],
+          "bbox": [
+            33,
+            201,
+            308,
+            364
+          ],
+          "solidity": 1.01,
+          "raw_text": [
+            "BEDROOM 2",
+            "12'x 12"
+          ],
+          "measured_ft": [
+            19.71,
+            11.71
+          ],
+          "chain_match_ft": {
+            "width": null,
+            "depth": null
+          },
+          "needs_review": true,
+          "trace_ref": "20261012-035249-7e97be#room1",
+          "stated_dims_ft": [
+            12.0,
+            12.0
+          ],
+          "dims_source": "model",
+          "label_source": "model",
+          "stated_sqft": 144.0,
+          "agreement_gap_pct": 60.3,
+          "review_reason": "printed size and measured area differ by 60%"
+        },
+        {
+          "id": 2,
+          "label": "BEDROOM 1",
+          "area_px": 45264,
+          "area_sqft": 230.9,
+          "centroid": [
+            450,
+            282
+          ],
+          "bbox": [
+            313,
+            201,
+            588,
+            364
+          ],
+          "solidity": 1.01,
+          "raw_text": [
+            "BEDROOM 1"
+          ],
+          "measured_ft": [
+            19.71,
+            11.71
+          ],
+          "chain_match_ft": {
+            "width": 20.0,
+            "depth": null
+          },
+          "needs_review": true,
+          "review_reason": "only one side matches a printed length",
+          "trace_ref": "20261012-035249-7e97be#room2"
+        },
+        {
+          "id": 3,
+          "label": "LIVING",
+          "area_px": 45264,
+          "area_sqft": 230.9,
+          "centroid": [
+            170,
+            114
+          ],
+          "bbox": [
+            33,
+            33,
+            308,
+            196
+          ],
+          "solidity": 1.01,
+          "raw_text": [
+            "LIVING",
+            "20'-0\" x 12'-0\"",
+            "20'-0\" x"
+          ],
+          "measured_ft": [
+            19.71,
+            11.71
+          ],
+          "stated_dims_ft": [
+            20.0,
+            12.0
+          ],
+          "dims_source": "rules",
+          "stated_sqft": 240.0,
+          "agreement_gap_pct": 3.8,
+          "needs_review": false,
+          "trace_ref": "20261012-035249-7e97be#room3"
+        },
+        {
+          "id": 4,
+          "label": "KITCHEN",
+          "area_px": 45264,
+          "area_sqft": 230.9,
+          "centroid": [
+            450,
+            114
+          ],
+          "bbox": [
+            313,
+            33,
+            588,
+            196
+          ],
+          "solidity": 1.01,
+          "raw_text": [
+            "KITCHEN",
+            "20'-0\" x 12'-0\"",
+            "20'-0\" x"
+          ],
+          "measured_ft": [
+            19.71,
+            11.71
+          ],
+          "stated_dims_ft": [
+            20.0,
+            12.0
+          ],
+          "dims_source": "rules",
+          "stated_sqft": 240.0,
+          "agreement_gap_pct": 3.8,
+          "needs_review": false,
+          "trace_ref": "20261012-035249-7e97be#room4"
+        }
+      ],
+      "schedules": [
+        {
+          "bbox": [
+            1063,
+            1002,
+            1663,
+            1103
+          ],
+          "rows": [
+            {
+              "mark": null,
+              "lengths_ft": [
+                20.0,
+                12.0
+              ],
+              "text": "20'-0\" x 12'-0\""
+            },
+            {
+              "mark": null,
+              "lengths_ft": [
+                20.0,
+                12.0
+              ],
+              "text": "20'-0\" x 12'-0\""
+            },
+            {
+              "mark": null,
+              "lengths_ft": [
+                20.0,
+                12.0
+              ],
+              "text": "20'-0\" x 12'-0\""
+            },
+            {
+              "mark": null,
+              "lengths_ft": [
+                20.0,
+                12.0
+              ],
+              "text": "20'-0\" x 12'-0\""
+            },
+            {
+              "mark": null,
+              "lengths_ft": [
+                20.0,
+                12.0
+              ],
+              "text": "20'-0\" x 12'-0\""
+            }
+          ]
+        }
+      ],
+      "group_id": "20261012-035249",
+      "trace_id": "20261012-035249-7e97be",
+      "trace_file": "trace_20261012-035249-7e97be.json"
+    },
+    {
+      "plan": "Putnam_House_-_floor_plans.jpg",
+      "pixels_per_foot": 14.0,
+      "overlay": "out/Putnam_House_-_floor_plans_seeded_overlay.png",
+      "quality": {
+        "geometry_reliable": false,
+        "reasons": [],
+        "banner": "Experimental label-seeded mode. Each region is grown from a room name and is approximate. 4 of 16 rooms agree with a printed size; the rest need a human check."
+      },
+      "rooms": [
+        {
+          "id": 1,
+          "label": "BED ROOM C",
+          "area_px": 52565,
+          "area_sqft": 268.2,
+          "centroid": [
+            960,
+            822
+          ],
+          "bbox": [
+            856,
+            697,
+            1069,
+            948
+          ],
+          "solidity": 0.99,
+          "raw_text": [
+            "r \u201cA",
+            "the",
+            "dee",
+            "Le",
+            "rales",
+            "aM",
+            "a oO",
+            "ew",
+            "\u2014 we or",
+            "BED-ROOM'C",
+            "20OM'G",
+            "15! +",
+            "oe",
+            "in ir",
+            "tha",
+            "fig",
+            "\u2014 oy",
+            "200M\"",
+            "ao",
+            "\u2014_\u2014 15! a",
+            "tea",
+            "OOM'G",
+            "5 7",
+            "a oO ew",
+            "oo",
+            "hw",
+            "rt",
+            "2 BED-ROOM:C",
+            "200M\"C",
+            "vel",
+            "ly f",
+            "TTT"
+          ],
+          "measured_ft": [
+            15.29,
+            18.0
+          ],
+          "match_log": [
+            "width: 15'7\" from h chain at 4834 (chain joints)",
+            "depth: 18'7\" from v dimension at 4725 (in the room)"
+          ],
+          "plan": 1,
+          "chain_rules": {
+            "width": "chain joints",
+            "depth": "in the room"
+          },
+          "chain_side_refs": {
+            "width": "h chain at 4834",
+            "depth": "v dimension at 4725"
+          },
+          "chain_sides": {
+            "width": 15.583,
+            "depth": 18.583
+          },
+          "stated_dims_ft": [
+            15.583,
+            18.583
+          ],
+          "dims_source": "dimension chain",
+          "stated_sqft": 289.6,
+          "chain_refs": [
+            "h chain at 4834",
+            "v dimension at 4725"
+          ],
+          "agreement_gap_pct": 7.4,
+          "side_errors_pct": {
+            "width": -1.9,
+            "depth": -3.1
+          },
+          "fill_pct": 92.6,
+          "needs_review": false,
+          "trace_ref": "20261012-035249-3d5bf1#room1",
+          "model_note": "model proposed a size that is not in the text; ignored"
+        },
+        {
+          "id": 2,
+          "label": "BED ROOM B",
+          "area_px": 30568,
+          "area_sqft": 156.0,
+          "centroid": [
+            976,
+            629
+          ],
+          "bbox": [
+            857,
+            565,
+            1096,
+            695
+          ],
+          "solidity": 1.0,
+          "raw_text": [
+            "7 \u201cA",
+            "bout",
+            "ROOM'B",
+            "tL..",
+            "ul",
+            "at \u2014",
+            "Ae",
+            "jf \u2014 en iL",
+            "rat",
+            "mr",
+            "er 8",
+            "@ BED*ROOM\u2019B",
+            "! vi",
+            "a 4",
+            "LL",
+            "\u2014_\u2014 ray\"",
+            "vain\"",
+            "1h",
+            "me",
+            "oat \u2014 \u2014 tr NO,"
+          ],
+          "measured_ft": [
+            17.14,
+            9.36
+          ],
+          "match_log": [
+            "width: 17'11\" from h chain at 3125 (chain joints)",
+            "depth: 9'0\" from v dimension at 4725 (in the room)"
+          ],
+          "plan": 1,
+          "chain_rules": {
+            "width": "chain joints",
+            "depth": "in the room"
+          },
+          "chain_side_refs": {
+            "width": "h chain at 3125",
+            "depth": "v dimension at 4725"
+          },
+          "chain_sides": {
+            "width": 17.917,
+            "depth": 9.0
+          },
+          "stated_dims_ft": [
+            17.917,
+            9.0
+          ],
+          "dims_source": "dimension chain",
+          "stated_sqft": 161.3,
+          "chain_refs": [
+            "h chain at 3125",
+            "v dimension at 4725"
+          ],
+          "agreement_gap_pct": 3.3,
+          "side_errors_pct": {
+            "width": -4.3,
+            "depth": 4.0
+          },
+          "fill_pct": 96.7,
+          "needs_review": false,
+          "trace_ref": "20261012-035249-3d5bf1#room2"
+        },
+        {
+          "id": 3,
+          "label": "BED ROOM D",
+          "area_px": 44409,
+          "area_sqft": 226.6,
+          "centroid": [
+            1288,
+            822
+          ],
+          "bbox": [
+            1197,
+            697,
+            1377,
+            948
+          ],
+          "solidity": 0.99,
+          "raw_text": [
+            "ral",
+            "Se",
+            "me",
+            "oe ce",
+            "<== BED-ROOM:D"
+          ],
+          "measured_ft": [
+            12.93,
+            18.0
+          ],
+          "match_log": [
+            "width: 13'6\" from h chain at 4834 (chain joints)",
+            "depth: refused: 1 across a wall, 1 between plans, 1 on another plan, 1 perimeter, joints not partitions",
+            "depth: refused: 6 across a wall, 5 between plans, 12 on another plan, 4 perimeter, ends not partitions",
+            "depth: refused at the name: 6 across a wall, 5 between plans, 12 on another plan, 4 perimeter, ends not partitions",
+            "depth: on chain joints: 0 chain(s) on this axis, none has a joint near both edges within 112 px",
+            "depth: in the room: 0 run(s) on this axis; 0 beside the room, 0 reach past it, 0 cover under 70% of it",
+            "depth: at the name: no run passes over it"
+          ],
+          "plan": 1,
+          "chain_rules": {
+            "width": "chain joints"
+          },
+          "chain_side_refs": {
+            "width": "h chain at 4834"
+          },
+          "chain_sides": {
+            "width": 13.5,
+            "depth": 18.583
+          },
+          "chain_partial": {
+            "width": 13.5,
+            "chain": "h chain at 4834"
+          },
+          "chain_match_ft": {
+            "width": null,
+            "depth": null
+          },
+          "needs_review": false,
+          "trace_ref": "20261012-035249-3d5bf1#room3",
+          "chain_borrowed": {
+            "depth": "BED ROOM C"
+          },
+          "chain_borrowed_from": {
+            "depth": "BED ROOM C (in the room, v dimension at 4725)"
+          },
+          "stated_dims_ft": [
+            13.5,
+            18.583
+          ],
+          "stated_sqft": 250.9,
+          "agreement_gap_pct": 9.7,
+          "dims_source": "dimension chain (depth borrowed from BED ROOM C)",
+          "side_errors_pct": {
+            "width": -4.2,
+            "depth": -3.1
+          },
+          "fill_pct": 90.3
+        },
+        {
+          "id": 4,
+          "label": "LATER KITCHEN",
+          "area_px": 56346,
+          "area_sqft": 287.5,
+          "centroid": [
+            423,
+            249
+          ],
+          "bbox": [
+            262,
+            139,
+            636,
+            356
+          ],
+          "solidity": 0.82,
+          "raw_text": [
+            "LATER: KITCHEN",
+            "{EN",
+            "Min | 2-2",
+            "EN i\"",
+            "fl.",
+            "AN ."
+          ],
+          "measured_ft": [
+            26.79,
+            15.57
+          ],
+          "match_log": [
+            "width: refused: 1 across a wall, 4 on another plan",
+            "width: refused: 9 across a wall, 14 on another plan",
+            "width: refused at the name: 10 across a wall, 14 on another plan",
+            "width: on chain joints: 0 chain(s) on this axis, none has a joint near both edges within 112 px",
+            "width: in the room: 1 run(s) on this axis; 1 beside the room, 0 reach past it, 0 cover under 70% of it",
+            "width: at the name: no run passes over it",
+            "depth: refused: 1 across a wall, 1 between plans, 2 on another plan",
+            "depth: refused: 1 across a wall, 5 between plans, 10 on another plan, 7 perimeter, ends not partitions",
+            "depth: refused at the name: 11 across a wall, 5 between plans, 10 on another plan",
+            "depth: on chain joints: 0 chain(s) on this axis, none has a joint near both edges within 112 px",
+            "depth: in the room: 4 run(s) on this axis; 2 beside the room, 2 reach past it, 0 cover under 70% of it",
+            "depth: at the name: no run passes over it"
+          ],
+          "plan": 0,
+          "chain_rules": {},
+          "chain_side_refs": {},
+          "chain_sides": {
+            "width": null,
+            "depth": null
+          },
+          "chain_match_ft": {
+            "width": null,
+            "depth": null
+          },
+          "needs_review": true,
+          "review_reason": "the region reaches past this room's own walls (bottom 0.71 ft, right 6.79 ft, top 1.93 ft), so it has run through an opening into the next space and its size is not the room's; no printed length matches this region",
+          "trace_ref": "20261012-035249-3d5bf1#room4",
+          "region_leak_ft": {
+            "right": 6.79,
+            "top": 1.93,
+            "bottom": 0.71
+          }
+        },
+        {
+          "id": 5,
+          "label": "NEW BAY",
+          "area_px": 45,
+          "area_sqft": 0.2,
+          "centroid": [
+            225,
+            339
+          ],
+          "bbox": [
+            221,
+            335,
+            229,
+            343
+          ],
+          "solidity": 1.22,
+          "raw_text": [],
+          "measured_ft": [
+            0.64,
+            0.64
+          ],
+          "match_log": [
+            "width: refused: 1 across a wall, 4 on another plan",
+            "width: refused: 9 across a wall, 14 on another plan",
+            "width: refused at the name: 9 across a wall, 14 on another plan",
+            "width: on chain joints: 0 chain(s) on this axis, none has a joint near both edges within 112 px",
+            "width: in the room: 1 run(s) on this axis; 1 beside the room, 0 reach past it, 0 cover under 70% of it",
+            "width: at the name: 1 run(s) pass over it, nearest 1099 px away (limit 1049)",
+            "depth: refused: 1 between plans, 2 on another plan",
+            "depth: refused: 2 across a wall, 5 between plans, 10 on another plan, 8 perimeter, ends not partitions",
+            "depth: refused at the name: 2 across a wall, 5 between plans, 10 on another plan, 8 perimeter, ends not partitions",
+            "depth: on chain joints: 1 chain(s) on this axis, none has a joint near both edges within 112 px",
+            "depth: in the room: 2 run(s) on this axis; 2 beside the room, 0 reach past it, 0 cover under 70% of it",
+            "depth: at the name: no run passes over it"
+          ],
+          "plan": 0,
+          "chain_rules": {},
+          "chain_side_refs": {},
+          "chain_sides": {
+            "width": null,
+            "depth": null
+          },
+          "chain_match_ft": {
+            "width": null,
+            "depth": null
+          },
+          "needs_review": true,
+          "review_reason": "no printed length matches this region; region too small to be a room",
+          "trace_ref": "20261012-035249-3d5bf1#room5"
+        },
+        {
+          "id": 6,
+          "label": "LIVING 7",
+          "area_px": 65583,
+          "area_sqft": 334.6,
+          "centroid": [
+            543,
+            525
+          ],
+          "bbox": [
+            413,
+            353,
+            696,
+            687
+          ],
+          "solidity": 0.81,
+          "raw_text": [
+            "Oy DINING?",
+            "DANING",
+            "LINING 7",
+            "\"ROOM",
+            "at",
+            "1A'10\"",
+            "14'10\"",
+            "10",
+            "lo",
+            "NEW-SEATS",
+            "DOOR-AND",
+            "STEP.",
+            "SO",
+            "DINING",
+            "rR",
+            "7K",
+            "wee |",
+            "1440\"",
+            "eee",
+            "NEW",
+            "SIDELIGHTS",
+            "\u201cSEATS",
+            "\u2014\u2014 To",
+            "oe",
+            "UUNING",
+            "UINING 7K",
+            "ROOM. i",
+            "aq",
+            "t er",
+            "Joe",
+            "YO | \u2014",
+            "STEP. SIDE",
+            "a o>",
+            "74",
+            "Oy",
+            "OD",
+            "O> DINING\u2019R",
+            "LINING",
+            "\\A10",
+            "410\""
+          ],
+          "measured_ft": [
+            20.29,
+            23.93
+          ],
+          "match_log": [
+            "width: refused: 1 across a wall, 4 on another plan",
+            "width: refused: 9 across a wall, 14 on another plan",
+            "width: refused at the name: 10 across a wall, 14 on another plan",
+            "width: on chain joints: 0 chain(s) on this axis, none has a joint near both edges within 112 px",
+            "width: in the room: 1 run(s) on this axis; 0 beside the room, 1 reach past it, 0 cover under 70% of it",
+            "width: at the name: no run passes over it",
+            "depth: 24'4\" from v dimension at 3254 (in the room)"
+          ],
+          "plan": 0,
+          "chain_rules": {
+            "depth": "in the room"
+          },
+          "chain_side_refs": {
+            "depth": "v dimension at 3254"
+          },
+          "chain_sides": {
+            "width": null,
+            "depth": 24.333
+          },
+          "chain_partial": {
+            "depth": 24.333,
+            "chain": "v dimension at 3254"
+          },
+          "chain_match_ft": {
+            "width": null,
+            "depth": null
+          },
+          "needs_review": true,
+          "review_reason": "the region reaches past this room's own walls (left 2.29 ft, right 4.43 ft), so it has run through an opening into the next space and its size is not the room's; only the depth of this room lands on a dimension chain; no printed length matches this region",
+          "trace_ref": "20261012-035249-3d5bf1#room6",
+          "region_leak_ft": {
+            "left": 2.29,
+            "right": 4.43
+          },
+          "model_note": "model proposed a size that is not in the text; ignored"
+        },
+        {
+          "id": 7,
+          "label": "WEST PARLOR",
+          "area_px": 51238,
+          "area_sqft": 261.4,
+          "centroid": [
+            217,
+            815
+          ],
+          "bbox": [
+            119,
+            684,
+            324,
+            947
+          ],
+          "solidity": 0.96,
+          "raw_text": [
+            "\u201cCORNICE",
+            "BEAM-OF",
+            "AND",
+            "LATER.",
+            "= DATE",
+            "WEST: PARLOR",
+            "ira",
+            "ly tN",
+            "| SS]",
+            "\u201cet",
+            "BEAM-OF LATER",
+            "PARLOR",
+            "a DATE e",
+            "i 53",
+            "ee ee,",
+            "DATE. \u2018OF",
+            "+ WESTrPARLOR",
+            "ia\""
+          ],
+          "measured_ft": [
+            14.71,
+            18.86
+          ],
+          "match_log": [
+            "width: 15'3\" from h dimension at 4830 (at the name)",
+            "depth: 19'4\" from v dimension at 863 (in the room)"
+          ],
+          "plan": 0,
+          "chain_rules": {
+            "width": "at the name",
+            "depth": "in the room"
+          },
+          "chain_side_refs": {
+            "width": "h dimension at 4830",
+            "depth": "v dimension at 863"
+          },
+          "chain_sides": {
+            "width": 15.25,
+            "depth": 19.333
+          },
+          "stated_dims_ft": [
+            15.25,
+            19.333
+          ],
+          "dims_source": "dimension chain",
+          "stated_sqft": 294.8,
+          "chain_refs": [
+            "h dimension at 4830",
+            "v dimension at 863"
+          ],
+          "agreement_gap_pct": 11.3,
+          "side_errors_pct": {
+            "width": -3.5,
+            "depth": -2.5
+          },
+          "fill_pct": 88.7,
+          "needs_review": true,
+          "trace_ref": "20261012-035249-3d5bf1#room7",
+          "region_leak_ft": {
+            "right": 1.5
+          },
+          "review_reason": "the region reaches past this room's own walls (right 1.50 ft), so it has run through an opening into the next space and its size is not the room's"
+        },
+        {
+          "id": 8,
+          "label": "EAST PARLOR",
+          "area_px": 46614,
+          "area_sqft": 237.8,
+          "centroid": [
+            541,
+            815
+          ],
+          "bbox": [
+            404,
+            693,
+            635,
+            946
+          ],
+          "solidity": 0.87,
+          "raw_text": [
+            "oO",
+            "cD",
+            "EAST: PARLOR",
+            "re",
+            "12",
+            "Ve",
+            "lo",
+            "@ \u2014 \u2014\u2014 - STEP.",
+            "EAST:",
+            "EAST: P,",
+            "PARLOR i",
+            "ee @ =H",
+            "neu a EAST",
+            "FAST: P,",
+            "PARLOR",
+            "42 1,",
+            "36",
+            "al",
+            "rata\""
+          ],
+          "measured_ft": [
+            16.57,
+            18.14
+          ],
+          "match_log": [
+            "width: 13'6\" from h dimension at 4830 (in the room)",
+            "depth: 19'0\" from v dimension at 3254 (in the room)"
+          ],
+          "plan": 0,
+          "chain_rules": {
+            "width": "in the room",
+            "depth": "in the room"
+          },
+          "chain_side_refs": {
+            "width": "h dimension at 4830",
+            "depth": "v dimension at 3254"
+          },
+          "chain_sides": {
+            "width": 13.5,
+            "depth": 19.0
+          },
+          "stated_dims_ft": [
+            13.5,
+            19.0
+          ],
+          "dims_source": "dimension chain",
+          "stated_sqft": 256.5,
+          "chain_refs": [
+            "h dimension at 4830",
+            "v dimension at 3254"
+          ],
+          "agreement_gap_pct": 7.3,
+          "side_errors_pct": {
+            "width": 22.8,
+            "depth": -4.5
+          },
+          "chain_match_ft": {
+            "width": null,
+            "depth": null
+          },
+          "needs_review": true,
+          "review_reason": "the region reaches past this room's own walls (left 4.57 ft), so it has run through an opening into the next space and its size is not the room's; the chains give 13'6\" x 19'0\" but the region measures width +23%, depth -4%; no printed length matches this region",
+          "trace_ref": "20261012-035249-3d5bf1#room8",
+          "region_leak_ft": {
+            "left": 4.57
+          },
+          "model_note": "model proposed a size that is not in the text; ignored"
+        },
+        {
+          "id": 9,
+          "label": "BED A",
+          "area_px": 47884,
+          "area_sqft": 244.3,
+          "centroid": [
+            974,
+            458
+          ],
+          "bbox": [
+            856,
+            354,
+            1124,
+            558
+          ],
+          "solidity": 0.93,
+          "raw_text": [
+            "12",
+            "200M\"",
+            "Sd",
+            "ores",
+            "vw =",
+            "POST",
+            "aD WeY \u2014_",
+            "SL \u2014 Oot. q LOS.)",
+            "PL",
+            "BED 200M\" A",
+            "SL",
+            "| \u2014 YN",
+            "~A\" bebe 200M\"",
+            "1 A",
+            "POST a",
+            "eu",
+            "\u00b0 VEY OOM:",
+            "| Ld",
+            "ae uw",
+            "xt"
+          ],
+          "measured_ft": [
+            19.21,
+            14.64
+          ],
+          "match_log": [
+            "width: refused: 4 across a wall, 1 on another plan",
+            "width: refused: 14 across a wall, 10 on another plan",
+            "width: refused at the name: 14 across a wall, 10 on another plan",
+            "width: on chain joints: 0 chain(s) on this axis, none has a joint near both edges within 112 px",
+            "width: in the room: 0 run(s) on this axis; 0 beside the room, 0 reach past it, 0 cover under 70% of it",
+            "width: at the name: no run passes over it",
+            "depth: 15'0\" from v dimension at 4725 (in the room)"
+          ],
+          "plan": 1,
+          "chain_rules": {
+            "depth": "in the room"
+          },
+          "chain_side_refs": {
+            "depth": "v dimension at 4725"
+          },
+          "chain_sides": {
+            "width": null,
+            "depth": 15.0
+          },
+          "chain_partial": {
+            "depth": 15.0,
+            "chain": "v dimension at 4725"
+          },
+          "chain_match_ft": {
+            "width": null,
+            "depth": 15.0
+          },
+          "needs_review": true,
+          "review_reason": "the region reaches past this room's own walls (right 2.21 ft), so it has run through an opening into the next space and its size is not the room's; only the depth of this room lands on a dimension chain; only one side matches a printed length",
+          "trace_ref": "20261012-035249-3d5bf1#room9",
+          "region_leak_ft": {
+            "right": 2.21
+          }
+        },
+        {
+          "id": 10,
+          "label": "MEMORIAL ROOM",
+          "area_px": 39777,
+          "area_sqft": 202.9,
+          "centroid": [
+            1277,
+            459
+          ],
+          "bbox": [
+            1152,
+            354,
+            1376,
+            558
+          ],
+          "solidity": 0.93,
+          "raw_text": [
+            "GEN. ISRAEL PUTNAM",
+            "\u00ae POSTS",
+            "EXPOSED-IN ROOM",
+            "ROOM",
+            "|. GEN.",
+            "ISRAEL\u201d PUTNAM",
+            "OSTS -$- BEAMS",
+            "MEMORIAL: ROOM",
+            "BEAMS",
+            "al",
+            "EXPOSED-IN",
+            "CLOS.@)"
+          ],
+          "measured_ft": [
+            16.07,
+            14.64
+          ],
+          "match_log": [
+            "width: refused: 4 across a wall, 1 on another plan",
+            "width: refused: 14 across a wall, 10 on another plan",
+            "width: refused at the name: 14 across a wall, 10 on another plan",
+            "width: on chain joints: 0 chain(s) on this axis, none has a joint near both edges within 112 px",
+            "width: in the room: 0 run(s) on this axis; 0 beside the room, 0 reach past it, 0 cover under 70% of it",
+            "width: at the name: no run passes over it",
+            "depth: refused: 1 across a wall, 1 between plans, 1 on another plan, 1 perimeter, joints not partitions",
+            "depth: refused: 6 across a wall, 5 between plans, 12 on another plan, 4 perimeter, ends not partitions",
+            "depth: refused at the name: 6 across a wall, 5 between plans, 12 on another plan, 4 perimeter, ends not partitions",
+            "depth: on chain joints: 0 chain(s) on this axis, none has a joint near both edges within 112 px",
+            "depth: in the room: 0 run(s) on this axis; 0 beside the room, 0 reach past it, 0 cover under 70% of it",
+            "depth: at the name: no run passes over it"
+          ],
+          "plan": 1,
+          "chain_rules": {},
+          "chain_side_refs": {},
+          "chain_sides": {
+            "width": null,
+            "depth": 15.0
+          },
+          "chain_match_ft": {
+            "width": null,
+            "depth": null
+          },
+          "needs_review": true,
+          "review_reason": "the region reaches past this room's own walls (left 2.00 ft), so it has run through an opening into the next space and its size is not the room's; no printed length matches this region",
+          "trace_ref": "20261012-035249-3d5bf1#room10",
+          "chain_borrowed": {
+            "depth": "BED A"
+          },
+          "chain_borrowed_from": {
+            "depth": "BED A (in the room, v dimension at 4725)"
+          },
+          "region_leak_ft": {
+            "left": 2.0
+          }
+        },
+        {
+          "id": 11,
+          "label": "NEW BATH",
+          "area_px": 21398,
+          "area_sqft": 109.2,
+          "centroid": [
+            1287,
+            627
+          ],
+          "bbox": [
+            1200,
+            565,
+            1376,
+            689
+          ],
+          "solidity": 0.99,
+          "raw_text": [
+            "uy",
+            "BATH",
+            "NEW",
+            "& FIXTORES",
+            "CUPBOARDS",
+            "yy",
+            "rou",
+            "- FIXTURES",
+            "\\2! 1",
+            "126",
+            "NEW BATH",
+            "yy & \u2018FIXTURES",
+            "24) fo Oe",
+            "tation",
+            "\u201cwe",
+            "oN"
+          ],
+          "measured_ft": [
+            12.64,
+            8.93
+          ],
+          "match_log": [
+            "width: 12'6\" from h chain at 3125 (chain joints)",
+            "depth: refused: 2 across a wall, 1 between plans, 1 on another plan",
+            "depth: refused: 9 across a wall, 5 between plans, 12 on another plan, 1 perimeter, ends not partitions",
+            "depth: refused at the name: 9 across a wall, 5 between plans, 12 on another plan, 1 perimeter, ends not partitions",
+            "depth: on chain joints: 0 chain(s) on this axis, none has a joint near both edges within 112 px",
+            "depth: in the room: 0 run(s) on this axis; 0 beside the room, 0 reach past it, 0 cover under 70% of it",
+            "depth: at the name: no run passes over it"
+          ],
+          "plan": 1,
+          "chain_rules": {
+            "width": "chain joints"
+          },
+          "chain_side_refs": {
+            "width": "h chain at 3125"
+          },
+          "chain_sides": {
+            "width": 12.5,
+            "depth": 9.0
+          },
+          "chain_partial": {
+            "width": 12.5,
+            "chain": "h chain at 3125"
+          },
+          "chain_match_ft": {
+            "width": null,
+            "depth": null
+          },
+          "needs_review": false,
+          "trace_ref": "20261012-035249-3d5bf1#room11",
+          "chain_borrowed": {
+            "depth": "BED ROOM B"
+          },
+          "chain_borrowed_from": {
+            "depth": "BED ROOM B (in the room, v dimension at 4725)"
+          },
+          "stated_dims_ft": [
+            12.5,
+            9.0
+          ],
+          "stated_sqft": 112.5,
+          "agreement_gap_pct": 2.9,
+          "dims_source": "dimension chain (depth borrowed from BED ROOM B)",
+          "side_errors_pct": {
+            "width": 1.1,
+            "depth": -0.8
+          },
+          "fill_pct": 97.1
+        },
+        {
+          "id": 12,
+          "label": "ATTIC",
+          "area_px": 28009,
+          "area_sqft": 142.9,
+          "centroid": [
+            1189,
+            309
+          ],
+          "bbox": [
+            1001,
+            272,
+            1377,
+            347
+          ],
+          "solidity": 1.0,
+          "raw_text": [
+            "Vv",
+            "ATTIC",
+            "27'8\"",
+            "to \u2014",
+            "2 US",
+            "at &"
+          ],
+          "measured_ft": [
+            26.93,
+            5.43
+          ],
+          "match_log": [
+            "width: 27'8\" from h chain at 1541 (chain joints)",
+            "depth: refused: 1 between plans, 1 on another plan, 2 perimeter, joints not partitions",
+            "depth: refused: 3 across a wall, 5 between plans, 12 on another plan, 7 perimeter, ends not partitions",
+            "depth: refused at the name: 7 across a wall, 5 between plans, 12 on another plan, 3 perimeter, ends not partitions",
+            "depth: on chain joints: 0 chain(s) on this axis, none has a joint near both edges within 112 px",
+            "depth: in the room: 0 run(s) on this axis; 0 beside the room, 0 reach past it, 0 cover under 70% of it",
+            "depth: at the name: no run passes over it"
+          ],
+          "plan": 1,
+          "chain_rules": {
+            "width": "chain joints"
+          },
+          "chain_side_refs": {
+            "width": "h chain at 1541"
+          },
+          "chain_sides": {
+            "width": 27.667,
+            "depth": null
+          },
+          "chain_partial": {
+            "width": 27.667,
+            "chain": "h chain at 1541"
+          },
+          "chain_match_ft": {
+            "width": 27.67,
+            "depth": null
+          },
+          "needs_review": true,
+          "review_reason": "only the width of this room lands on a dimension chain; only one side matches a printed length",
+          "trace_ref": "20261012-035249-3d5bf1#room12"
+        },
+        {
+          "id": 13,
+          "label": "KITCHEN",
+          "area_px": 69012,
+          "area_sqft": 352.1,
+          "centroid": [
+            223,
+            515
+          ],
+          "bbox": [
+            118,
+            325,
+            353,
+            679
+          ],
+          "solidity": 0.93,
+          "raw_text": [
+            "ame NEW: BAY",
+            "TT",
+            "OLD",
+            "a \"KITCHEN",
+            "\u2014_ ot",
+            "i9",
+            "i9 3",
+            "wv JD ster",
+            "NEW",
+            "OL\"",
+            "bee",
+            "be \u2014",
+            "KITCHEN",
+            "ee",
+            "ens",
+            "POST",
+            "ll /\u00ae),",
+            "Kx \u2018NEW? BAY",
+            "VLU TNLIOALIN",
+            "wr",
+            "stg",
+            "yt Ke",
+            "\u2014 eee",
+            "\u2014 sy.",
+            "STEP",
+            "YA BAY",
+            "\u2014 ame",
+            "ot \"KITCHEN",
+            "Iw",
+            "etoll K\u00ae",
+            "sre",
+            "ANI ve",
+            "ULUTAILICHON",
+            "ok",
+            "eR",
+            "Sl",
+            "is'3\" K\u00ae",
+            "\u2014 Post7",
+            "Or"
+          ],
+          "measured_ft": [
+            16.86,
+            25.36
+          ],
+          "match_log": [
+            "width: 15'3\" from h dimension at 2911 (in the room)",
+            "depth: 23'7\" from v dimension at 863 (in the room)"
+          ],
+          "plan": 0,
+          "chain_rules": {
+            "width": "in the room",
+            "depth": "in the room"
+          },
+          "chain_side_refs": {
+            "width": "h dimension at 2911",
+            "depth": "v dimension at 863"
+          },
+          "chain_sides": {
+            "width": 15.25,
+            "depth": 23.583
+          },
+          "stated_dims_ft": [
+            15.25,
+            23.583
+          ],
+          "dims_source": "dimension chain",
+          "stated_sqft": 359.6,
+          "chain_refs": [
+            "h dimension at 2911",
+            "v dimension at 863"
+          ],
+          "agreement_gap_pct": 2.1,
+          "side_errors_pct": {
+            "width": 10.5,
+            "depth": 7.5
+          },
+          "chain_match_ft": {
+            "width": null,
+            "depth": 23.58
+          },
+          "needs_review": true,
+          "review_reason": "the region reaches past this room's own walls (right 3.29 ft), so it has run through an opening into the next space and its size is not the room's; the chains give 15'3\" x 23'7\" but the region measures width +10%, depth +8%; only one side matches a printed length",
+          "trace_ref": "20261012-035249-3d5bf1#room13",
+          "region_leak_ft": {
+            "right": 3.29
+          }
+        },
+        {
+          "id": 14,
+          "label": "HALL",
+          "area_px": 6974,
+          "area_sqft": 35.6,
+          "centroid": [
+            1171,
+            630
+          ],
+          "bbox": [
+            1143,
+            566,
+            1199,
+            694
+          ],
+          "solidity": 0.99,
+          "raw_text": [
+            "* Ags",
+            "HALL\u201d.",
+            "rst] 4 A",
+            "POST RALL XY NEW",
+            "S HALL\u201d",
+            "at ah x HALL",
+            "Ary * OLA"
+          ],
+          "measured_ft": [
+            4.07,
+            9.21
+          ],
+          "match_log": [
+            "width: 5'0\" from h dimension at 3694 (at the name)",
+            "depth: refused: 2 across a wall, 1 between plans, 1 on another plan",
+            "depth: refused: 9 across a wall, 5 between plans, 12 on another plan, 1 perimeter, ends not partitions",
+            "depth: refused at the name: 10 across a wall, 5 between plans, 12 on another plan",
+            "depth: on chain joints: 0 chain(s) on this axis, none has a joint near both edges within 112 px",
+            "depth: in the room: 0 run(s) on this axis; 0 beside the room, 0 reach past it, 0 cover under 70% of it",
+            "depth: at the name: no run passes over it"
+          ],
+          "plan": 1,
+          "chain_rules": {
+            "width": "at the name"
+          },
+          "chain_side_refs": {
+            "width": "h dimension at 3694"
+          },
+          "chain_sides": {
+            "width": 5.0,
+            "depth": 9.0
+          },
+          "chain_partial": {
+            "width": 5.0,
+            "chain": "h dimension at 3694"
+          },
+          "chain_match_ft": {
+            "width": null,
+            "depth": null
+          },
+          "needs_review": true,
+          "review_reason": "the drawing gives 5'0\" x 9'0\" but the region measures width -19%, depth +2%",
+          "trace_ref": "20261012-035249-3d5bf1#room14",
+          "chain_borrowed": {
+            "depth": "BED ROOM B"
+          },
+          "chain_borrowed_from": {
+            "depth": "BED ROOM B (in the room, v dimension at 4725)"
+          },
+          "stated_dims_ft": [
+            5.0,
+            9.0
+          ],
+          "stated_sqft": 45.0,
+          "agreement_gap_pct": 20.9,
+          "dims_source": "dimension chain (depth borrowed from BED ROOM B)",
+          "side_errors_pct": {
+            "width": -18.6,
+            "depth": 2.4
+          }
+        },
+        {
+          "id": 15,
+          "label": "HALL",
+          "area_px": 4198,
+          "area_sqft": 21.4,
+          "centroid": [
+            1131,
+            931
+          ],
+          "bbox": [
+            1071,
+            913,
+            1192,
+            948
+          ],
+          "solidity": 1.02,
+          "raw_text": [
+            "HALL",
+            "ee",
+            "or <e ee",
+            "HALL TT"
+          ],
+          "measured_ft": [
+            8.71,
+            2.57
+          ],
+          "match_log": [
+            "width: refused: 4 across a wall, 1 on another plan",
+            "width: refused: 11 across a wall, 10 on another plan, 3 perimeter, ends not partitions",
+            "width: refused at the name: 11 across a wall, 10 on another plan, 3 perimeter, ends not partitions",
+            "width: on chain joints: 0 chain(s) on this axis, none has a joint near both edges within 112 px",
+            "width: in the room: 0 run(s) on this axis; 0 beside the room, 0 reach past it, 0 cover under 70% of it",
+            "width: at the name: no run passes over it",
+            "depth: refused: 2 across a wall, 1 between plans, 1 on another plan",
+            "depth: refused: 10 across a wall, 5 between plans, 12 on another plan",
+            "depth: refused at the name: 10 across a wall, 5 between plans, 12 on another plan",
+            "depth: on chain joints: 0 chain(s) on this axis, none has a joint near both edges within 112 px",
+            "depth: in the room: 0 run(s) on this axis; 0 beside the room, 0 reach past it, 0 cover under 70% of it",
+            "depth: at the name: no run passes over it"
+          ],
+          "plan": 1,
+          "chain_rules": {},
+          "chain_side_refs": {},
+          "chain_sides": {
+            "width": null,
+            "depth": null
+          },
+          "chain_match_ft": {
+            "width": null,
+            "depth": null
+          },
+          "needs_review": true,
+          "review_reason": "no printed length matches this region; region too small to be a room",
+          "trace_ref": "20261012-035249-3d5bf1#room15"
+        },
+        {
+          "id": 16,
+          "label": "TOILETS",
+          "area_px": 3258,
+          "area_sqft": 16.6,
+          "centroid": [
+            363,
+            721
+          ],
+          "bbox": [
+            331,
+            696,
+            399,
+            745
+          ],
+          "solidity": 1.0,
+          "raw_text": [
+            "TON",
+            "TOILETS",
+            "tT",
+            "Pot?",
+            "TOILET Ss"
+          ],
+          "measured_ft": [
+            4.93,
+            3.57
+          ],
+          "match_log": [
+            "width: refused: 1 across a wall, 4 on another plan",
+            "width: refused: 10 across a wall, 14 on another plan",
+            "width: refused at the name: 10 across a wall, 14 on another plan",
+            "width: on chain joints: 0 chain(s) on this axis, none has a joint near both edges within 112 px",
+            "width: in the room: 0 run(s) on this axis; 0 beside the room, 0 reach past it, 0 cover under 70% of it",
+            "width: at the name: no run passes over it",
+            "depth: refused: 1 across a wall, 1 between plans, 2 on another plan",
+            "depth: refused: 12 across a wall, 5 between plans, 10 on another plan",
+            "depth: refused at the name: 12 across a wall, 5 between plans, 10 on another plan",
+            "depth: on chain joints: 0 chain(s) on this axis, none has a joint near both edges within 112 px",
+            "depth: in the room: 0 run(s) on this axis; 0 beside the room, 0 reach past it, 0 cover under 70% of it",
+            "depth: at the name: no run passes over it"
+          ],
+          "plan": 0,
+          "chain_rules": {},
+          "chain_side_refs": {},
+          "chain_sides": {
+            "width": null,
+            "depth": null
+          },
+          "chain_match_ft": {
+            "width": null,
+            "depth": null
+          },
+          "needs_review": true,
+          "review_reason": "no printed length matches this region; region too small to be a room",
+          "trace_ref": "20261012-035249-3d5bf1#room16"
+        }
+      ],
+      "group_id": "20261012-035249",
+      "trace_id": "20261012-035249-3d5bf1",
+      "trace_file": "trace_20261012-035249-3d5bf1.json"
+    }
+  ],
+  "group_id": "20261012-035249",
+  "version": "12.35.0",
+  "layers": {
+    "seeded": {
+      "group_id": "20261012-035249",
+      "version": "12.35.0",
+      "at": "2026-10-12 05:18:04"
+    },
+    "interpret": {
+      "group_id": "20261012-035249",
+      "version": "12.35.0",
+      "at": "2026-10-12 05:24:33",
+      "model": "qwen2.5:3b",
+      "server": "http://127.0.0.1:11434"
+    }
+  },
+  "technology": {
+    "text_reader": "tesseract",
+    "layout_splitter_yolo": "off",
+    "sam2_second_opinion": "off",
+    "dimension_reader": "on"
+  }
+}

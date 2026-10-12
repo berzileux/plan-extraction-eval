@@ -1,8 +1,8 @@
 plans/
 plans_pdf/*.pdf
 text_db/
-viewer/out/
-viewer/results.json
+viewer/out/*
+!viewer/out/*_seeded_overlay.png
 manifest.csv
 truth.csv
 __pycache__/
