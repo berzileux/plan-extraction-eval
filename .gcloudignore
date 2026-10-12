@@ -1,0 +1,15 @@
+.git/
+.gitignore
+.venv/
+__pycache__/
+plans/
+plans_pdf/
+text_db/
+*.pt
+*.zip
+run_20*
+probe_*/
+dimlines_debug/
+scratch-phase*/
+viewer/trace_*.json
+viewer/group_*.json
